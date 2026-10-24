@@ -16,7 +16,7 @@ import {
 export const gender = pgEnum("gender", ["kadin", "erkek"]);
 export const productStatus = pgEnum("product_status", ["taslak", "onayda", "yayinda", "arsiv"]);
 export const assetKind = pgEnum("asset_kind", ["ham", "kesik", "manken", "kombin", "sosyal"]);
-export const channel = pgEnum("channel", ["site", "trendyol", "instagram"]);
+export const channel = pgEnum("channel", ["site", "trendyol", "instagram", "facebook"]);
 export const listingStatus = pgEnum("listing_status", ["bekliyor", "yayinda", "kimlik_yok", "hata", "reddedildi"]);
 export const shootStatus = pgEnum("shoot_status", ["yuklendi", "isleniyor", "tamamlandi", "hata"]);
 export const jobStatus = pgEnum("job_status", ["bekliyor", "calisiyor", "tamamlandi", "hata"]);

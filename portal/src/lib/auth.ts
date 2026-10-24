@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 const COOKIE = "kms_admin";
 const TTL = 60 * 60 * 12; // 12 saat
 
-function secret() {
+export function secret() {
   const s = process.env.SESSION_SECRET;
   if (!s && process.env.NODE_ENV === "production") throw new Error("SESSION_SECRET tanımlı değil");
   return s ?? "dev-secret";

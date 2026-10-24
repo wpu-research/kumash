@@ -1,14 +1,13 @@
 "use server";
 
-import { mkdir, writeFile } from "node:fs/promises";
-import path from "node:path";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { channelListings, orders, products, shoots, variants } from "@/db/schema";
+import { channelListings, orders, products, variants } from "@/db/schema";
 import { adminPassword, endSession, requireAdmin, startSession } from "@/lib/auth";
 import { enqueue } from "@/lib/jobs";
+import { createShoot } from "@/lib/shoots";
 
 export async function login(_prev: { error?: string }, formData: FormData): Promise<{ error?: string }> {
   const expected = adminPassword();
@@ -23,27 +22,10 @@ export async function logout() {
   redirect("/panel/giris");
 }
 
-const OK_EXT = new Set([".jpg", ".jpeg", ".png", ".webp", ".heic"]);
-
 export async function uploadShoot(formData: FormData) {
   await requireAdmin();
-  const d = await db();
   const files = formData.getAll("photos").filter((f): f is File => f instanceof File && f.size > 0);
-  const [shoot] = await d.insert(shoots).values({ note: String(formData.get("note") ?? "") || null }).returning();
-  const urls: string[] = [];
-  if (files.length) {
-    const dir = path.resolve(process.env.UPLOAD_DIR ?? "./uploads", "shoots", String(shoot.id));
-    await mkdir(dir, { recursive: true });
-    for (const [i, f] of files.slice(0, 8).entries()) {
-      const ext = path.extname(f.name).toLowerCase();
-      if (!OK_EXT.has(ext) || f.size > 15 * 1024 * 1024) continue;
-      const name = `${i + 1}${ext}`;
-      await writeFile(path.join(dir, name), Buffer.from(await f.arrayBuffer()));
-      urls.push(`/uploads/shoots/${shoot.id}/${name}`);
-    }
-  }
-  await d.update(shoots).set({ photoUrls: urls }).where(eq(shoots.id, shoot.id));
-  await enqueue("process_shoot", { shootId: shoot.id });
+  const shoot = await createShoot(files, String(formData.get("note") ?? ""));
   redirect(`/panel/cekim/${shoot.id}`);
 }
 

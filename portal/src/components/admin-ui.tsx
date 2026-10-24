@@ -6,7 +6,7 @@ export const LISTING_STYLE: Record<string, string> = {
   reddedildi: "bg-brand-soft text-brand",
 };
 export const LISTING_LABEL: Record<string, string> = { yayinda: "yayında", kimlik_yok: "kimlik yok", bekliyor: "bekliyor", hata: "hata", reddedildi: "reddedildi" };
-export const CHANNEL_LABEL: Record<string, string> = { site: "Site", trendyol: "Trendyol", instagram: "Instagram" };
+export const CHANNEL_LABEL: Record<string, string> = { site: "Site", trendyol: "Trendyol", instagram: "Instagram", facebook: "Facebook" };
 
 export const PRODUCT_STATUS: Record<string, [string, string]> = {
   taslak: ["Taslak", "bg-page text-muted"],

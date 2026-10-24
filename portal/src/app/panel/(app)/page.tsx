@@ -48,7 +48,7 @@ export default async function Page() {
           <h2 className="font-semibold">Kanal durumu</h2>
           <p className="text-[12.5px] text-muted">Yayındaki ürünlerin kanallardaki karşılığı</p>
           <div className="mt-4 grid gap-4">
-            {(["site", "trendyol", "instagram"] as const).map((ch) => {
+            {(["site", "trendyol", "instagram", "facebook"] as const).map((ch) => {
               const rows = listingRows.filter((r) => r.channel === ch);
               const total = rows.reduce((s, r) => s + r.n, 0) || 1;
               return (

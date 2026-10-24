@@ -8,7 +8,7 @@ import { mockProvider } from "./pipeline/mock";
 import { renderItemImages } from "./pipeline/images";
 import { PermanentError } from "./pipeline/provider";
 import { createProduct } from "./products";
-import { publishEverywhere } from "./publishers";
+import { CHANNELS, publishEverywhere, type Channel } from "./publishers";
 
 // Postgres tablosu üstünde basit iş kuyruğu. Aynı süreçte çalışır; hacim artınca
 // Redis + BullMQ'ya taşınacak (plan: ayrı worker servisi). Arayüz aynı kalır: enqueue + işleyiciler.
@@ -121,7 +121,8 @@ const handlers: Record<JobType, Handler> = {
       .update(products)
       .set({ status: "yayinda", publishedAt: new Date() })
       .where(and(eq(products.id, productId)));
-    await publishEverywhere(d, productId, log);
+    const only = ((payload.channels as string[] | undefined) ?? []).filter((c): c is Channel => (CHANNELS as readonly string[]).includes(c));
+    await publishEverywhere(d, productId, log, only);
   },
 
   // Bir kanalda satış olunca diğer kanallara stok bildirimi. Trendyol bağlanınca stok güncelleme ucu burada çağrılacak.

@@ -4,6 +4,7 @@ import { assets, categories, channelListings, products, variants } from "@/db/sc
 import { SIZES, categorySlug, slugify, type Gender } from "./catalog-data";
 import type { Garment } from "./garments";
 import type { Copy, GeneratedImage, ItemAttrs } from "./pipeline/provider";
+import { CHANNELS } from "./publishers";
 
 type NewProduct = {
   gender: Gender;
@@ -66,7 +67,7 @@ export async function createProduct(d: DB, p: NewProduct) {
   await d.insert(assets).values(imgs);
 
   await d.insert(channelListings).values(
-    (["site", "trendyol", "instagram"] as const).map((channel) => ({ productId: row.id, channel, status: "bekliyor" as const })),
+    CHANNELS.map((channel) => ({ productId: row.id, channel, status: "bekliyor" as const })),
   );
   return { ...row, slug };
 }

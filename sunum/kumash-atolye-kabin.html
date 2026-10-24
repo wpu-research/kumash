@@ -1,0 +1,975 @@
+<title>Kumash Atölye ve Kabin</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Italiana&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: porselen zeminli lookbook; dev başlıklar, ince çizgiler, bol boşluk. Tek büyük an: kapakta düz çekimi tarayıp mankene çeviren ışık. Bölüm geçişlerinde iplik gibi ince bir dikiş çizgisi. */
+:root {
+  --paper: #EDEFF1;
+  --paper-2: #E2E5E9;
+  --card: #F7F8F9;
+  --ink: #12141B;
+  --ink-2: #5C6271;
+  --line: rgba(18, 20, 27, .12);
+  --line-2: rgba(18, 20, 27, .22);
+  --accent: #8C1D35;
+  --accent-soft: rgba(140, 29, 53, .09);
+  --ok: #2F7D5B;
+  --warn: #A36A0A;
+  --sheen-a: #C6B5FF;
+  --sheen-b: #FFC3D5;
+  --sheen-c: #B3EDE2;
+  --device: #0F1117;
+  --screen: #FFFFFF;
+  --screen-2: #F4F2F0;
+  --screen-ink: #17181D;
+  --screen-mute: #80838D;
+  --display: "Italiana", "Didot", "Bodoni 72", Georgia, serif;
+  --body: "Geist", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --shadow: 0 1px 1px rgba(18, 20, 27, .04), 0 12px 32px -8px rgba(18, 20, 27, .14), 0 40px 80px -24px rgba(18, 20, 27, .18);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0C0E13; --paper-2: #151821; --card: #12151C;
+    --ink: #ECEEF2; --ink-2: #9399A7; --line: rgba(236, 238, 242, .1); --line-2: rgba(236, 238, 242, .2);
+    --accent: #E5728A; --accent-soft: rgba(229, 114, 138, .12); --ok: #6CC79E; --warn: #E3B04B;
+    --device: #05060A;
+    --shadow: 0 1px 1px rgba(0, 0, 0, .3), 0 12px 32px -8px rgba(0, 0, 0, .5), 0 40px 80px -24px rgba(0, 0, 0, .6);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0C0E13; --paper-2: #151821; --card: #12151C;
+  --ink: #ECEEF2; --ink-2: #9399A7; --line: rgba(236, 238, 242, .1); --line-2: rgba(236, 238, 242, .2);
+  --accent: #E5728A; --accent-soft: rgba(229, 114, 138, .12); --ok: #6CC79E; --warn: #E3B04B;
+  --device: #05060A;
+  --shadow: 0 1px 1px rgba(0, 0, 0, .3), 0 12px 32px -8px rgba(0, 0, 0, .5), 0 40px 80px -24px rgba(0, 0, 0, .6);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font: 400 16.5px/1.62 var(--body); letter-spacing: -.005em;
+  -webkit-font-smoothing: antialiased; overflow-x: hidden;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 60; background: var(--paper); }
+a { color: inherit; text-decoration-color: var(--line-2); text-underline-offset: 3px; }
+a:hover { text-decoration-color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+p { margin: 0; }
+h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
+.wrap {
+  max-width: 1240px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+@media (min-width: 760px) { .wrap { padding-left: max(40px, env(safe-area-inset-left, 0px)); padding-right: max(40px, env(safe-area-inset-right, 0px)); } }
+.label { font: 500 11.5px/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-2); }
+.display { font-family: var(--display); letter-spacing: -.01em; line-height: .92; }
+.it { font-style: italic; color: var(--accent); }
+.sheen {
+  background: linear-gradient(100deg, var(--accent) 0%, #B0477E 35%, #6F5BD6 70%, var(--accent) 100%);
+  background-size: 220% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: sheen 9s ease-in-out infinite;
+}
+@keyframes sheen { 50% { background-position: 100% 0; } }
+.mono { font-family: var(--mono); }
+.num { font-variant-numeric: tabular-nums; }
+.muted { color: var(--ink-2); }
+
+/* Üst gezinme: cam hap, bölüm göstergesi */
+.nav {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 50;
+  padding-block: 12px;
+}
+.nav__pill {
+  display: flex; align-items: center; gap: 4px; padding: 5px; border-radius: 999px;
+  background: color-mix(in srgb, var(--card) 72%, transparent);
+  backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  border: 1px solid var(--line); box-shadow: 0 8px 30px -12px rgba(0, 0, 0, .25);
+  width: max-content; max-width: 100%; margin: 0 auto; overflow-x: auto; scrollbar-width: none;
+}
+.nav__pill::-webkit-scrollbar { display: none; }
+.nav__brand { font: 400 20px/1 var(--display); padding: 6px 14px 6px 12px; white-space: nowrap; }
+.nav a { font: 500 12.5px/1 var(--body); text-decoration: none; padding: 9px 13px; border-radius: 999px; color: var(--ink-2); white-space: nowrap; transition: background .25s, color .25s; }
+.nav a:hover { color: var(--ink); }
+.nav a.on { background: var(--ink); color: var(--paper); }
+.nav__bar { position: absolute; left: 0; bottom: 0; height: 1px; width: 0; background: var(--accent); }
+
+/* Kapak */
+.hero { padding-block: 48px 40px; position: relative; }
+.aura {
+  position: absolute; z-index: -1; pointer-events: none; inset: -120px -10% auto auto; width: 70vw; max-width: 900px; aspect-ratio: 1;
+  background: conic-gradient(from 120deg, var(--sheen-a), var(--sheen-b), var(--sheen-c), var(--sheen-a));
+  filter: blur(90px); opacity: .45; border-radius: 50%; animation: drift 24s ease-in-out infinite alternate;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .aura { opacity: .16; } }
+:root[data-theme="dark"] .aura { opacity: .16; }
+@keyframes drift { to { transform: translate(-8%, 10%) rotate(40deg) scale(1.1); } }
+.hero__top { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: 14px; }
+.hero__title { font-size: clamp(64px, 15.5vw, 228px); margin-top: 28px; }
+.hero__title span { display: block; }
+.hero__title .amp { font-size: .62em; vertical-align: .18em; color: var(--ink-2); padding-inline: .06em; }
+.hero__grid { display: grid; gap: 40px; margin-top: 40px; align-items: end; }
+@media (min-width: 980px) { .hero__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 64px; } }
+.hero__copy { display: grid; gap: 22px; min-width: 0; }
+.hero__lead { font-size: clamp(19px, 2vw, 23px); line-height: 1.45; font-weight: 300; max-width: 30ch; text-wrap: pretty; }
+.hero__lead b { font-weight: 500; }
+.legend { display: grid; gap: 0; border-top: 1px solid var(--line); }
+.legend div { display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 14.5px; }
+.legend b { font-weight: 500; }
+.legend span { color: var(--ink-2); }
+
+/* Tarama sahnesi */
+.scan { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; min-width: 0; }
+.look { position: relative; border-radius: 4px; overflow: hidden; aspect-ratio: 3 / 4; background: var(--paper-2); box-shadow: var(--shadow); }
+.look:nth-child(2) { transform: translateY(-28px); }
+.look img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.look .after { clip-path: inset(0 0 0 var(--cut, 100%)); }
+.look::after {
+  content: ""; position: absolute; top: 0; bottom: 0; left: var(--cut, 100%); width: 2px; transform: translateX(-1px);
+  background: linear-gradient(180deg, var(--sheen-a), var(--sheen-b), var(--sheen-c));
+  box-shadow: 0 0 18px 4px rgba(255, 195, 213, .75), 0 0 2px #fff;
+}
+.look figcaption { position: absolute; left: 8px; right: 8px; bottom: 8px; display: flex; justify-content: space-between; gap: 6px; font: 500 10px/1 var(--mono); color: #17181D; letter-spacing: .04em; }
+.look figcaption span { background: rgba(255, 255, 255, .86); padding: 4px 6px; border-radius: 2px; backdrop-filter: blur(4px); white-space: nowrap; }
+@media (max-width: 600px) { .look figcaption span:last-child { display: none; } .look:nth-child(2) { transform: translateY(-14px); } }
+.scan__note { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 12px; font: 500 11px var(--mono); color: var(--ink-2); flex-wrap: wrap; margin-top: -10px; }
+
+.facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 72px; border-top: 1px solid var(--ink); }
+@media (min-width: 820px) { .facts { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.fact { padding: 22px 18px 4px 0; display: grid; gap: 8px; }
+.fact b { font: 400 clamp(40px, 5vw, 64px)/1 var(--display); font-variant-numeric: tabular-nums; }
+.fact span { font-size: 13.5px; color: var(--ink-2); max-width: 22ch; }
+
+/* Bölüm başlığı */
+.sec { padding-block: 120px 0; scroll-margin-top: 70px; }
+.head { display: grid; gap: 20px; margin-bottom: 56px; }
+@media (min-width: 980px) { .head { grid-template-columns: 220px minmax(0, 1fr); gap: 40px; align-items: start; } }
+.head__idx { display: flex; gap: 12px; align-items: baseline; border-top: 1px solid var(--ink); padding-top: 12px; }
+.head__idx b { font: 400 30px/1 var(--display); }
+.head__body { display: grid; gap: 18px; border-top: 1px solid var(--line); padding-top: 12px; min-width: 0; }
+.head h2 { font: 400 clamp(42px, 6.2vw, 88px)/.95 var(--display); letter-spacing: -.015em; }
+.head p { font-size: 18.5px; font-weight: 300; color: var(--ink-2); max-width: 60ch; }
+.seam { height: 1px; margin-top: 120px; background: repeating-linear-gradient(90deg, var(--line-2) 0 8px, transparent 8px 14px); }
+
+/* 01 Sistem */
+.system { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+@media (min-width: 940px) { .system { grid-template-columns: 1fr 1.25fr 1fr; } }
+.sys { background: var(--card); padding: 30px 26px; display: grid; gap: 18px; align-content: start; min-width: 0; }
+.sys--core { background: var(--ink); color: var(--paper); }
+.sys--core .label, .sys--core .muted { color: color-mix(in srgb, var(--paper) 60%, transparent); }
+.sys h3 { font: 400 46px/1 var(--display); }
+.sys ul { list-style: none; margin: 0; padding: 0; display: grid; }
+.sys li { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 14.5px; align-items: baseline; }
+.sys--core li { border-top-color: rgba(255, 255, 255, .12); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .sys--core li { border-top-color: rgba(0, 0, 0, .14); } }
+:root[data-theme="dark"] .sys--core li { border-top-color: rgba(0, 0, 0, .14); }
+.st { font: 500 10px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; display: inline-flex; gap: 6px; align-items: center; }
+.st::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.st--ok { color: var(--ok); }
+.st--new { color: var(--accent); }
+.sys--core .st--new { color: var(--sheen-b); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .sys--core .st--new { color: var(--accent); } }
+:root[data-theme="dark"] .sys--core .st--new { color: var(--accent); }
+
+/* 02 Atölye: yapışkan telefon + adımlar */
+.demo { display: grid; gap: 40px; }
+@media (min-width: 980px) { .demo { grid-template-columns: minmax(0, .9fr) minmax(0, 1fr); gap: 80px; } }
+.devices { display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 8px 2px 24px; scrollbar-width: thin; }
+.devices .phone { flex: 0 0 min(250px, 72vw); scroll-snap-align: center; }
+@media (min-width: 980px) {
+  .devices { display: block; position: sticky; top: 110px; height: 640px; overflow: visible; padding: 0; perspective: 1600px; }
+  .devices .phone { position: absolute; left: 50%; top: 0; width: 300px; transform: translateX(-50%) rotateY(-10deg) rotateX(3deg) scale(.96); opacity: 0; transition: opacity .6s, transform .9s cubic-bezier(.2, .8, .2, 1); }
+  .devices .phone.on { opacity: 1; transform: translateX(-50%) rotateY(-4deg) rotateX(1deg); }
+  .devices::after { content: ""; position: absolute; left: 50%; bottom: -6px; width: 220px; height: 30px; transform: translateX(-50%); background: radial-gradient(closest-side, rgba(0, 0, 0, .28), transparent); filter: blur(6px); z-index: -1; }
+}
+.phone { aspect-ratio: 9 / 19; border-radius: 44px; padding: 10px; background: var(--device); box-shadow: var(--shadow), inset 0 0 0 1.5px rgba(255, 255, 255, .12); }
+.scr { position: relative; height: 100%; border-radius: 35px; overflow: hidden; background: var(--screen); color: var(--screen-ink); font: 400 12px/1.35 var(--body); display: flex; flex-direction: column; }
+.scr__bar { display: flex; justify-content: space-between; align-items: center; padding: 13px 22px 6px; font: 600 11.5px var(--body); }
+.scr__bar i { width: 80px; height: 22px; background: var(--device); border-radius: 12px; display: block; }
+.scr__h { padding: 8px 16px 12px; display: flex; justify-content: space-between; align-items: baseline; }
+.scr__h b { font: 400 24px/1 var(--display); }
+.scr__h small { font: 500 9.5px var(--mono); color: var(--screen-mute); }
+.scr__b { flex: 1; padding: 0 12px 14px; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
+.vf { position: relative; flex: 1; background: #E9E4DE; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 34px 18px 18px; align-content: center; }
+.vf .box { position: relative; }
+.vf .box img { width: 100%; display: block; border-radius: 2px; }
+.vf .box::before { content: ""; position: absolute; inset: -4px; border: 1.5px solid #fff; border-radius: 4px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .08); }
+.vf .box::after { content: attr(data-l); position: absolute; left: -4px; top: -18px; font: 500 8.5px/1 var(--mono); color: #fff; background: #17181D; padding: 3px 5px; border-radius: 2px; }
+.vf__hint { position: absolute; left: 50%; top: 10px; transform: translateX(-50%); background: rgba(23, 24, 29, .78); color: #fff; font: 500 9.5px var(--mono); padding: 5px 9px; border-radius: 99px; white-space: nowrap; backdrop-filter: blur(6px); }
+.shut { display: flex; justify-content: space-around; align-items: center; padding: 14px 18px 22px; background: #0F1117; color: rgba(255, 255, 255, .7); font-size: 10px; }
+.shut i { width: 54px; height: 54px; border-radius: 50%; border: 3px solid #fff; display: grid; place-items: center; }
+.shut i::after { content: ""; width: 42px; height: 42px; border-radius: 50%; background: #fff; }
+.it-row { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 10px; align-items: center; padding: 8px; background: var(--screen-2); border-radius: 12px; }
+.it-row img { width: 52px; height: 60px; object-fit: cover; border-radius: 8px; }
+.it-row b { font-weight: 600; font-size: 12px; display: block; }
+.it-row small { font-size: 10.5px; color: var(--screen-mute); display: block; }
+.tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+.tags span { font: 500 8.5px/1 var(--mono); padding: 3px 5px; border-radius: 99px; background: #fff; border: 1px solid #E4E1DD; }
+.cta { margin-top: auto; text-align: center; padding: 13px; border-radius: 14px; background: #17181D; color: #fff; font-weight: 600; font-size: 12.5px; }
+.cta--accent { background: #8C1D35; }
+.gen { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.gen div { position: relative; aspect-ratio: 3 / 4; border-radius: 10px; overflow: hidden; background: #ECE8E3; }
+.gen img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gen .sel::after { content: "✓"; position: absolute; top: 6px; right: 6px; width: 18px; height: 18px; border-radius: 50%; background: #17181D; color: #fff; font-size: 10px; display: grid; place-items: center; }
+.gen .re { display: grid; place-items: center; text-align: center; font-size: 10.5px; color: var(--screen-mute); background: transparent; border: 1.5px dashed #D9D4CE; }
+.sizes { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
+.sizes span { text-align: center; padding: 7px 0; border-radius: 10px; background: var(--screen-2); font: 500 9.5px var(--mono); color: var(--screen-mute); }
+.sizes b { display: block; font: 600 14px var(--body); color: var(--screen-ink); }
+.ch { display: flex; justify-content: space-between; align-items: center; padding: 11px 12px; border-radius: 12px; background: var(--screen-2); font-size: 12px; font-weight: 500; }
+.ch small { display: block; font-weight: 400; font-size: 10px; color: var(--screen-mute); }
+.tg { width: 34px; height: 20px; border-radius: 99px; background: #2F7D5B; position: relative; flex: none; }
+.tg::after { content: ""; position: absolute; right: 2px; top: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; }
+
+.steps { display: grid; gap: 0; min-width: 0; }
+.step { padding: 36px 0; border-top: 1px solid var(--line); display: grid; gap: 14px; transition: opacity .4s; }
+@media (min-width: 980px) { .step { min-height: min(52vh, 520px); align-content: center; } .steps.live .step:not(.on) { opacity: .38; } }
+.step__n { display: flex; justify-content: space-between; gap: 12px; }
+.step h3 { font: 400 clamp(38px, 4.2vw, 56px)/1 var(--display); }
+.step p { color: var(--ink-2); font-size: 16.5px; max-width: 46ch; }
+.step ul { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 6px; font-size: 14.5px; }
+.step li { display: flex; gap: 10px; }
+.step li::before { content: ""; flex: none; width: 14px; height: 1px; background: var(--accent); transform: translateY(.8em); }
+
+.pipe { margin-top: 72px; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.pipe__head { display: flex; justify-content: space-between; gap: 12px; padding: 14px 18px; background: var(--paper-2); flex-wrap: wrap; }
+.pipe__row { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 4px 16px; padding: 16px 18px; border-top: 1px solid var(--line); align-items: baseline; }
+@media (min-width: 860px) { .pipe__row { grid-template-columns: 40px 230px minmax(0, 1fr) 140px; } }
+.pipe__row .n { font: 400 22px/1 var(--display); color: var(--ink-2); }
+.pipe__row b { font-weight: 500; }
+.pipe__row p { color: var(--ink-2); font-size: 14.5px; grid-column: 2 / -1; }
+@media (min-width: 860px) { .pipe__row p { grid-column: auto; } }
+.pipe__row .t { font: 500 12px var(--mono); text-align: right; white-space: nowrap; }
+@media (max-width: 859px) { .pipe__row .t { grid-row: 1; grid-column: 3; } }
+.bar { position: relative; height: 3px; margin-top: 8px; background: var(--line); border-radius: 2px; overflow: hidden; grid-column: 2 / -1; }
+@media (min-width: 860px) { .bar { grid-column: 4; margin-top: 0; } }
+.bar i { position: absolute; top: 0; bottom: 0; background: var(--accent); border-radius: 2px; }
+
+/* 03 Kabin */
+.kabin { display: grid; gap: 40px; }
+@media (min-width: 1020px) { .kabin { grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: 64px; align-items: start; } }
+.shop { background: var(--screen); color: var(--screen-ink); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); min-width: 0; }
+.shop__bar { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid #EEECE9; }
+.shop__bar b { font: 400 22px/1 var(--display); }
+.shop__bar span { flex: 1; min-width: 0; font: 500 10.5px var(--mono); color: var(--screen-mute); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right; }
+.pdp { display: grid; gap: 22px; padding: 22px; }
+@media (min-width: 620px) { .pdp { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); } }
+.compare { position: relative; aspect-ratio: 3 / 4; border-radius: 10px; overflow: hidden; background: #ECE8E3; user-select: none; touch-action: pan-y; }
+.compare img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+.compare .on { clip-path: inset(0 0 0 var(--x, 50%)); }
+.compare__line { position: absolute; top: 0; bottom: 0; left: var(--x, 50%); width: 2px; transform: translateX(-1px); background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06); pointer-events: none; }
+.compare__knob { position: absolute; top: 50%; left: var(--x, 50%); width: 40px; height: 40px; transform: translate(-50%, -50%); border-radius: 50%; background: #fff; box-shadow: 0 6px 20px rgba(0, 0, 0, .2); display: grid; place-items: center; pointer-events: none; font: 500 12px var(--mono); color: #17181D; }
+.compare__tag { position: absolute; top: 10px; font: 500 9.5px/1 var(--mono); background: rgba(255, 255, 255, .9); padding: 5px 7px; border-radius: 99px; color: #17181D; pointer-events: none; }
+.compare input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; margin: 0; }
+.pdp__info { display: grid; gap: 14px; align-content: start; min-width: 0; }
+.pdp__info h4 { margin: 0; font: 400 34px/1 var(--display); }
+.pdp__meta { font-size: 12.5px; color: var(--screen-mute); }
+.pdp__price { font: 600 24px var(--body); letter-spacing: -.02em; }
+.sz { display: flex; gap: 6px; flex-wrap: wrap; }
+.sz span { min-width: 40px; text-align: center; padding: 8px 0; border-radius: 99px; border: 1px solid #E4E1DD; font: 500 11.5px var(--mono); }
+.sz .on { background: #17181D; color: #fff; border-color: #17181D; }
+.try-btn {
+  position: relative; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; border-radius: 99px; font-weight: 600; font-size: 13.5px;
+  background: #fff; color: #17181D; isolation: isolate;
+}
+.try-btn::before { content: ""; position: absolute; inset: -1.5px; border-radius: inherit; z-index: -1; background: conic-gradient(from var(--a, 0deg), var(--sheen-a), var(--sheen-b), var(--sheen-c), var(--sheen-a)); animation: spin 6s linear infinite; }
+.try-btn::after { content: ""; position: absolute; inset: 0; border-radius: inherit; z-index: -1; background: #fff; }
+@property --a { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+@keyframes spin { to { --a: 360deg; } }
+.buy { text-align: center; padding: 14px; border-radius: 99px; background: #17181D; color: #fff; font-weight: 600; font-size: 13.5px; }
+.modes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 22px 22px; }
+.mode { border: 1px solid #EEECE9; border-radius: 12px; padding: 12px; display: grid; gap: 8px; font-size: 11.5px; color: var(--screen-mute); }
+.mode b { color: var(--screen-ink); font-size: 12.5px; font-weight: 600; }
+.bodies { display: flex; gap: 4px; }
+.bodies svg { flex: 1; height: 46px; color: #CFC8C1; }
+.bodies svg.on { color: #17181D; }
+.consent { margin: 0 22px 22px; display: flex; gap: 10px; align-items: flex-start; font-size: 11px; color: var(--screen-mute); padding: 12px; border-radius: 12px; background: var(--screen-2); }
+.consent i { flex: none; width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid #B9B3AD; margin-top: 1px; }
+
+.notes { display: grid; gap: 0; min-width: 0; }
+.note { padding: 20px 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 16px; }
+.note:last-child { border-bottom: 1px solid var(--line); }
+.note b { font-weight: 500; font-size: 15px; }
+.note p { color: var(--ink-2); font-size: 15px; }
+@media (max-width: 480px) { .note { grid-template-columns: 1fr; gap: 6px; } }
+
+/* 04 Mimari */
+.arch { position: relative; display: grid; gap: 16px; }
+@media (min-width: 980px) { .arch { grid-template-columns: 1fr 1.25fr 1fr; gap: 56px; align-items: center; } }
+.arch__col { display: grid; gap: 12px; min-width: 0; }
+.node { position: relative; padding: 18px 20px; border: 1px solid var(--line); border-radius: 6px; background: var(--card); display: grid; gap: 4px; }
+.node b { font-weight: 500; font-size: 15.5px; }
+.node span { font-size: 13.5px; color: var(--ink-2); }
+.node .mono { font-size: 11px; color: var(--accent); }
+.core { background: var(--ink); color: var(--paper); border-radius: 6px; padding: 30px 28px; display: grid; gap: 16px; position: relative; overflow: hidden; }
+.core::before { content: ""; position: absolute; inset: auto -30% -60% auto; width: 80%; aspect-ratio: 1; background: conic-gradient(var(--sheen-a), var(--sheen-b), var(--sheen-c), var(--sheen-a)); filter: blur(60px); opacity: .28; }
+.core h3 { font: 400 40px/1 var(--display); position: relative; }
+.core ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; position: relative; }
+.core li { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 10px; padding: 9px 0; border-top: 1px solid rgba(127, 127, 127, .22); font-size: 13.5px; align-items: baseline; }
+.core .label { color: color-mix(in srgb, var(--paper) 60%, transparent); position: relative; }
+.core .st--new { color: var(--sheen-b); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .core .st--new { color: var(--accent); } }
+:root[data-theme="dark"] .core .st--new { color: var(--accent); }
+@media (min-width: 980px) {
+  .arch__col--l .node::after, .arch__col--r .node::before { content: ""; position: absolute; top: 50%; width: 56px; height: 1px; background: repeating-linear-gradient(90deg, var(--line-2) 0 4px, transparent 4px 8px); }
+  .arch__col--l .node::after { left: 100%; }
+  .arch__col--r .node::before { right: 100%; }
+  .pulse { position: absolute; top: calc(50% - 3px); width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); animation: flow 2.6s linear infinite; }
+  .arch__col--l .pulse { left: 100%; }
+  .arch__col--r .pulse { right: 100%; animation-name: flowr; }
+  .arch__col .node:nth-child(3) .pulse { animation-delay: -.9s; }
+  .arch__col .node:nth-child(4) .pulse { animation-delay: -1.7s; }
+  .arch__col .node:nth-child(5) .pulse { animation-delay: -.4s; }
+}
+@keyframes flow { from { transform: translateX(0); opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } to { transform: translateX(50px); opacity: 0; } }
+@keyframes flowr { from { transform: translateX(-50px); opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } to { transform: translateX(0); opacity: 0; } }
+
+/* 05 Servisler */
+.svc { display: grid; gap: 0; border-top: 1px solid var(--ink); }
+.svc__row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 24px; padding: 22px 0; border-bottom: 1px solid var(--line); align-items: baseline; }
+@media (min-width: 900px) { .svc__row { grid-template-columns: 280px minmax(0, 1fr) 130px 120px 110px; } }
+.svc__row h3 { font: 400 28px/1.05 var(--display); }
+.svc__row p { color: var(--ink-2); font-size: 14.5px; grid-column: 1 / -1; }
+@media (min-width: 900px) { .svc__row p { grid-column: auto; } }
+.svc__row .mono { font-size: 12.5px; }
+.svc__k { display: none; }
+@media (max-width: 899px) { .svc__row .mono { grid-column: 1 / -1; } .svc__k { display: inline; color: var(--ink-2); } }
+.role { font: 500 10px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; padding: 6px 9px; border-radius: 99px; border: 1px solid var(--line-2); white-space: nowrap; justify-self: start; }
+.role--main { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.role--off { color: var(--ink-2); text-decoration: line-through; }
+@media (max-width: 899px) { .role { grid-row: 1; grid-column: 2; justify-self: end; } }
+.fine { font-size: 13px; color: var(--ink-2); margin-top: 16px; max-width: 80ch; }
+
+/* 06 Gizlilik: dokuma etiketler */
+.labels { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.woven {
+  position: relative; padding: 24px 22px 22px; background: var(--card); border: 1px solid var(--line); border-radius: 3px; display: grid; gap: 10px;
+  background-image: repeating-linear-gradient(0deg, transparent 0 3px, color-mix(in srgb, var(--ink) 3%, transparent) 3px 4px);
+}
+.woven::before, .woven::after { content: ""; position: absolute; left: 10px; right: 10px; height: 1px; background: repeating-linear-gradient(90deg, var(--line-2) 0 5px, transparent 5px 9px); }
+.woven::before { top: 8px; } .woven::after { bottom: 8px; }
+.woven .care { display: flex; gap: 8px; color: var(--accent); }
+.woven .care svg { width: 22px; height: 22px; }
+.woven b { font: 400 26px/1.05 var(--display); }
+.woven p { color: var(--ink-2); font-size: 14.5px; }
+
+/* 07 Maliyet */
+.calc { display: grid; gap: 32px; }
+@media (min-width: 980px) { .calc { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 72px; align-items: start; } }
+.field { display: grid; gap: 10px; padding: 20px 0; border-top: 1px solid var(--line); }
+.field label { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 15px; }
+.field output { font: 400 34px/1 var(--display); font-variant-numeric: tabular-nums; }
+.field small { color: var(--ink-2); font-size: 12.5px; }
+input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 22px; background: transparent; margin: 0; }
+input[type="range"]::-webkit-slider-runnable-track { height: 2px; background: linear-gradient(90deg, var(--accent) var(--p, 50%), var(--line-2) var(--p, 50%)); }
+input[type="range"]::-moz-range-track { height: 2px; background: var(--line-2); }
+input[type="range"]::-moz-range-progress { height: 2px; background: var(--accent); }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; margin-top: -9px; border-radius: 50%; background: var(--paper); border: 2px solid var(--ink); }
+input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--paper); border: 2px solid var(--ink); }
+.receipt { background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 28px; box-shadow: var(--shadow); }
+.receipt__row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; padding: 12px 0; border-bottom: 1px dashed var(--line-2); font-size: 15px; }
+.receipt__row small { display: block; color: var(--ink-2); font-size: 12px; }
+.receipt__row span:last-child { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.receipt__total { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; padding-top: 20px; }
+.receipt__total b { font: 400 clamp(64px, 8vw, 104px)/.9 var(--display); font-variant-numeric: tabular-nums; }
+.receipt__total span { font-size: 13px; color: var(--ink-2); max-width: 22ch; }
+.split { display: flex; height: 8px; border-radius: 99px; overflow: hidden; margin-top: 18px; background: var(--line); }
+.split i { display: block; height: 100%; transition: width .3s; }
+.split__key { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px; font-size: 12px; color: var(--ink-2); }
+.split__key span { display: inline-flex; gap: 6px; align-items: center; }
+.split__key span::before { content: ""; width: 8px; height: 8px; border-radius: 2px; background: var(--c); }
+
+/* 08 Riskler */
+.risks { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+@media (min-width: 820px) { .risks { grid-template-columns: 1fr 1fr; } }
+.risk { background: var(--card); padding: 26px; display: grid; gap: 10px; align-content: start; }
+.risk__lv { display: flex; gap: 3px; align-items: center; }
+.risk__lv i { width: 18px; height: 4px; border-radius: 2px; background: var(--line-2); }
+.risk__lv i.f { background: var(--accent); }
+.risk__lv span { margin-left: 8px; font: 500 10.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+.risk b { font: 400 26px/1.1 var(--display); }
+.risk p { color: var(--ink-2); font-size: 14.5px; }
+
+/* 09 Gerekenler */
+.needs { display: grid; border-top: 1px solid var(--ink); }
+.need { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 4px 16px; padding: 16px 0; border-bottom: 1px solid var(--line); align-items: baseline; }
+@media (min-width: 860px) { .need { grid-template-columns: 28px minmax(0, 1.2fr) minmax(0, 1fr) 160px; } }
+.need i { width: 16px; height: 16px; border: 1.5px solid var(--ink-2); border-radius: 50%; transform: translateY(3px); }
+.need b { font-weight: 500; }
+.need .muted { font-size: 14px; }
+@media (max-width: 859px) { .need .muted { grid-column: 2 / -1; grid-row: 2; } }
+.need .mono { font-size: 12px; text-align: right; white-space: nowrap; }
+.need .now { color: var(--accent); }
+
+/* 10 Takvim */
+.gantt { overflow-x: auto; }
+.gantt__grid { min-width: 780px; display: grid; grid-template-columns: 250px repeat(9, minmax(0, 1fr)); row-gap: 0; position: relative; }
+.wk { font: 500 11px var(--mono); color: var(--ink-2); padding: 0 0 12px 8px; border-left: 1px solid var(--line); }
+.g-name { font-size: 14.5px; padding: 14px 16px 14px 0; border-top: 1px solid var(--line); }
+.g-name small { display: block; color: var(--ink-2); font-size: 12px; }
+.g-cell { border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+.g-bar { align-self: center; height: 30px; margin: 0 4px; border-radius: 99px; background: var(--ink); color: var(--paper); font: 500 10.5px/30px var(--mono); padding-inline: 12px; white-space: nowrap; overflow: hidden; z-index: 1; }
+.g-bar--wait { background: transparent; color: var(--ink); border: 1px dashed var(--ink-2); line-height: 28px; }
+.g-bar--kabin { background: linear-gradient(90deg, var(--accent), #6F5BD6); color: #fff; }
+
+/* 11 Kararlar */
+.decide { display: grid; gap: 16px; }
+@media (min-width: 900px) { .decide { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.dq { padding: 28px 24px; border: 1px solid var(--line); border-radius: 6px; background: var(--card); display: grid; gap: 14px; align-content: start; }
+.dq h3 { font: 400 34px/1 var(--display); }
+.dq p { color: var(--ink-2); font-size: 14.5px; }
+.dq .rec { color: var(--ink); border-top: 1px solid var(--line); padding-top: 14px; font-size: 15px; }
+.dq .rec .label { display: block; margin-bottom: 6px; color: var(--accent); }
+
+.outro { padding-block: 140px 48px; }
+.outro h2 { font: 400 clamp(56px, 11vw, 160px)/.9 var(--display); }
+.src { margin-top: 72px; display: grid; gap: 14px; font-size: 13px; color: var(--ink-2); }
+.src ul { columns: 3 240px; column-gap: 28px; padding: 0; margin: 0; list-style: none; }
+.src li { break-inside: avoid; padding: 6px 0; border-top: 1px solid var(--line); }
+.end { margin-top: 48px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font: 500 11px var(--mono); color: var(--ink-2); border-top: 1px solid var(--ink); padding-top: 14px; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+
+<nav class="nav wrap" aria-label="Bölümler">
+  <div class="nav__pill" id="nav">
+    <span class="nav__brand">Kumash</span>
+    <a href="#sistem">Sistem</a><a href="#atolye">Atölye</a><a href="#kabin">Kabin</a><a href="#mimari">Mimari</a><a href="#servisler">Servisler</a><a href="#gizlilik">Gizlilik</a><a href="#maliyet">Maliyet</a><a href="#riskler">Riskler</a><a href="#takvim">Takvim</a><a href="#kararlar">Kararlar</a>
+  </div>
+  <div class="nav__bar" id="bar"></div>
+</nav>
+
+<header class="hero wrap">
+  <div class="aura" aria-hidden="true"></div>
+  <div class="hero__top"><span class="label">Kumash · Ürün sistemi planı</span><span class="label">24 Ekim 2026</span></div>
+  <h1 class="hero__title display"><span>Atölye</span><span><span class="amp">&amp;</span><span class="sheen" style="display:inline">Kabin</span></span></h1>
+  <div class="hero__grid">
+    <div class="hero__copy">
+      <p class="hero__lead">Personel ürünü telefonla çeker; sistem tanır, <b>mankene giydirir</b>; siteye, Trendyol'a, Instagram'a ve Facebook'a yükler. Müşteri de beğendiği ürünü <b>kendi üzerinde</b> görür.</p>
+      <div class="legend">
+        <div><b>Atölye</b><span>Personel uygulaması · iOS ve Android</span></div>
+        <div><b>Kabin</b><span>Sitede "Üzerinde dene"</span></div>
+        <div><b>Çekirdek</b><span>Railway'deki mevcut portal, ikisini de besler</span></div>
+      </div>
+    </div>
+    <div class="scan" id="scan" aria-label="Düz çekimden manken görseline dönüşüm">
+      <figure class="look" style="margin:0"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDAwIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjgwMCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJiZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI0Y3RjVGMiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0VDRThFMyIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJza2luIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMCI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjRDlDOUI5Ii8+PHN0b3Agb2Zmc2V0PSIuNSIgc3RvcC1jb2xvcj0iI0VFRTNENyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0NEQkJBOSIvPjwvbGluZWFyR3JhZGllbnQ+PGZpbHRlciBpZD0ic2giIHg9Ii0yMCUiIHk9Ii0yMCUiIHdpZHRoPSIxNDAlIiBoZWlnaHQ9IjE0MCUiPjxmZURyb3BTaGFkb3cgZHg9IjAiIGR5PSI2IiBzdGREZXZpYXRpb249IjYiIGZsb29kLW9wYWNpdHk9IjAuMjIiLz48L2ZpbHRlcj48bGluZWFyR3JhZGllbnQgaWQ9Im1zIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9IjAuMTYzIi8+PHN0b3Agb2Zmc2V0PSIuNDUiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMCIvPjxzdG9wIG9mZnNldD0iLjYyIiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9IjAuMDM5NTk5OTk5OTk5OTk5OTk2Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDAwIiBzdG9wLW9wYWNpdHk9IjAuMTk3OTk5OTk5OTk5OTk5OTgiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0idXJsKCNiZykiLz48ZyBmaWx0ZXI9InVybCgjc2gpIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNTAgMjAwKSBzY2FsZSgxLjE1KSB0cmFuc2xhdGUoLTE1MCAtMTgyKSI+PHBhdGggZD0iTTEwMCAxMDhRMTUwIDk2IDIwMCAxMDhMMjI2IDE0MEwyNDAgMjU4TDIyMCAyNjJMMjA0IDE2NEwxOTggMjU4UTE1MCAyNjYgMTAyIDI1OEw5NiAxNjRMODAgMjYyTDYwIDI1OEw3NCAxNDBaIiBmaWxsPSIjRThEQ0M0Ii8+PHBhdGggZD0iTTEwMCAxMDhRMTUwIDk2IDIwMCAxMDhMMjI2IDE0MEwyNDAgMjU4TDIyMCAyNjJMMjA0IDE2NEwxOTggMjU4UTE1MCAyNjYgMTAyIDI1OEw5NiAxNjRMODAgMjYyTDYwIDI1OEw3NCAxNDBaIiBmaWxsPSJ1cmwoI21zKSIvPjxwYXRoIGQ9Ik0xMzAgMTAxTDE1MCAxMjRMMTQwIDEzMkwxMjQgMTA4WiIgZmlsbD0iI2VlZTVkMyIvPjxwYXRoIGQ9Ik0xNzAgMTAxTDE1MCAxMjRMMTYwIDEzMkwxNzYgMTA4WiIgZmlsbD0iI2VlZTVkMyIvPjxwYXRoIGQ9Ik0xNTAgMTI0VjI1OCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOTc4ZjdmIiBzdHJva2Utd2lkdGg9IjEiIHN0cm9rZS1vcGFjaXR5PSIwLjciIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjE1MCIgY3k9IjE0MCIgcj0iMi4yIiBmaWxsPSIjOTc4ZjdmIiBmaWxsLW9wYWNpdHk9IjAuOCIvPjxjaXJjbGUgY3g9IjE1MCIgY3k9IjE2NiIgcj0iMi4yIiBmaWxsPSIjOTc4ZjdmIiBmaWxsLW9wYWNpdHk9IjAuOCIvPjxjaXJjbGUgY3g9IjE1MCIgY3k9IjE5MiIgcj0iMi4yIiBmaWxsPSIjOTc4ZjdmIiBmaWxsLW9wYWNpdHk9IjAuOCIvPjxjaXJjbGUgY3g9IjE1MCIgY3k9IjIxOCIgcj0iMi4yIiBmaWxsPSIjOTc4ZjdmIiBmaWxsLW9wYWNpdHk9IjAuOCIvPjxjaXJjbGUgY3g9IjE1MCIgY3k9IjI0NCIgcj0iMi4yIiBmaWxsPSIjOTc4ZjdmIiBmaWxsLW9wYWNpdHk9IjAuOCIvPjwvZz48L3N2Zz4=" alt="Gömlek, düz çekim"><img class="after" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDAwIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjgwMCI+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJiZyIgY3g9Ii41IiBjeT0iLjM1IiByPSIuOCI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjRjFFQ0U2Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRDlDRkM1Ii8+PC9yYWRpYWxHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9InNraW4iIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIwIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNEOUM5QjkiLz48c3RvcCBvZmZzZXQ9Ii41IiBzdG9wLWNvbG9yPSIjRUVFM0Q3Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjQ0RCQkE5Ii8+PC9saW5lYXJHcmFkaWVudD48ZmlsdGVyIGlkPSJzaCIgeD0iLTIwJSIgeT0iLTIwJSIgd2lkdGg9IjE0MCUiIGhlaWdodD0iMTQwJSI+PGZlRHJvcFNoYWRvdyBkeD0iMCIgZHk9IjIiIHN0ZERldmlhdGlvbj0iMiIgZmxvb2Qtb3BhY2l0eT0iMC4xOCIvPjwvZmlsdGVyPjxsaW5lYXJHcmFkaWVudCBpZD0iYnMiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMC4xMzUiLz48c3RvcCBvZmZzZXQ9Ii40NSIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIwIi8+PHN0b3Agb2Zmc2V0PSIuNjIiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMC4wMjIwMDAwMDAwMDAwMDAwMDIiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwMDAiIHN0b3Atb3BhY2l0eT0iMC4xOSIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJtcyIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIwLjE2MyIvPjxzdG9wIG9mZnNldD0iLjQ1IiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9IjAiLz48c3RvcCBvZmZzZXQ9Ii42MiIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIwLjAzOTU5OTk5OTk5OTk5OTk5NiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAwMCIgc3RvcC1vcGFjaXR5PSIwLjE5Nzk5OTk5OTk5OTk5OTk4Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSI0MDAiIGZpbGw9InVybCgjYmcpIi8+PGVsbGlwc2UgY3g9IjE1MCIgY3k9IjM5NCIgcng9IjcwIiByeT0iNyIgZmlsbD0iIzAwMCIgZmlsbC1vcGFjaXR5PSIuMTIiLz48Zz4KPGcgZmlsbD0idXJsKCNza2luKSI+CiAgPGVsbGlwc2UgY3g9IjE1MCIgY3k9IjU0IiByeD0iMjMiIHJ5PSIyOCIvPgogIDxwYXRoIGQ9Ik0xNDEgNzZIMTU5TDE2MSAxMDRIMTM5WiIvPgogIDxwYXRoIGQ9Ik0xMDAgMTA4UTE1MCA5NiAyMDAgMTA4UTIwNyAxNjAgMTkwIDIwNVEyMDAgMjMwIDE5OCAyNTJMMTAyIDI1MlExMDAgMjMwIDExMCAyMDVROTMgMTYwIDEwMCAxMDhaIi8+CiAgPGVsbGlwc2UgY3g9IjEwMSIgY3k9IjExNSIgcng9IjExIiByeT0iOSIvPjxlbGxpcHNlIGN4PSIxOTkiIGN5PSIxMTUiIHJ4PSIxMSIgcnk9IjkiLz4KICA8cGF0aCBkPSJNMTA0IDI0OEwxNDggMjQ4TDE0MiAzOTJMMTE4IDM5MloiLz48cGF0aCBkPSJNMTUyIDI0OEwxOTYgMjQ4TDE4MiAzOTJMMTU4IDM5MloiLz4KPC9nPjxnIGZpbHRlcj0idXJsKCNzaCkiPjxwYXRoIGQ9Ik0xMTAgMTk4UTE1MCAyMDQgMTkwIDE5OEwxOTYgMzg2TDE2MCAzODhMMTUxIDI1NEwxNDkgMjU0TDE0MCAzODhMMTA0IDM4NloiIGZpbGw9IiMyQzNCNUUiLz48cGF0aCBkPSJNMTEwIDE5OFExNTAgMjA0IDE5MCAxOThMMTk2IDM4NkwxNjAgMzg4TDE1MSAyNTRMMTQ5IDI1NEwxNDAgMzg4TDEwNCAzODZaIiBmaWxsPSJ1cmwoI2JzKSIvPjxwYXRoIGQ9Ik0xMTAgMTk4UTE1MCAyMDQgMTkwIDE5OEwxOTAuNiAyMTBRMTUwIDIxNiAxMDkuNiAyMTBaIiBmaWxsPSIjMWQyNjNkIiBmaWxsLW9wYWNpdHk9Ii41Ii8+PHBhdGggZD0iTTE1MCAyMTJWMjQ2IiBmaWxsPSJub25lIiBzdHJva2U9IiMxZDI2M2QiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2Utb3BhY2l0eT0iMC43IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTE4IDIxNFExMjYgMjI4IDE0MCAyMjIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzFkMjYzZCIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2Utb3BhY2l0eT0iMC43IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTAwIDEwOFExNTAgOTYgMjAwIDEwOEwyMTYgMTE2TDIyMCAyNjhMMjAzIDI2OEwyMDAgMTU0TDE5OCAyNThRMTUwIDI2NiAxMDIgMjU4TDEwMCAxNTRMOTcgMjY4TDgwIDI2OEw4NCAxMTZaIiBmaWxsPSIjRThEQ0M0Ii8+PHBhdGggZD0iTTEwMCAxMDhRMTUwIDk2IDIwMCAxMDhMMjE2IDExNkwyMjAgMjY4TDIwMyAyNjhMMjAwIDE1NEwxOTggMjU4UTE1MCAyNjYgMTAyIDI1OEwxMDAgMTU0TDk3IDI2OEw4MCAyNjhMODQgMTE2WiIgZmlsbD0idXJsKCNtcykiLz48cGF0aCBkPSJNMTMwIDEwMUwxNTAgMTI0TDE0MCAxMzJMMTI0IDEwOFoiIGZpbGw9IiNlZWU1ZDMiLz48cGF0aCBkPSJNMTcwIDEwMUwxNTAgMTI0TDE2MCAxMzJMMTc2IDEwOFoiIGZpbGw9IiNlZWU1ZDMiLz48cGF0aCBkPSJNMTUwIDEyNFYyNTgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzk3OGY3ZiIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2Utb3BhY2l0eT0iMC43IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48Y2lyY2xlIGN4PSIxNTAiIGN5PSIxNDAiIHI9IjIuMiIgZmlsbD0iIzk3OGY3ZiIgZmlsbC1vcGFjaXR5PSIwLjgiLz48Y2lyY2xlIGN4PSIxNTAiIGN5PSIxNjYiIHI9IjIuMiIgZmlsbD0iIzk3OGY3ZiIgZmlsbC1vcGFjaXR5PSIwLjgiLz48Y2lyY2xlIGN4PSIxNTAiIGN5PSIxOTIiIHI9IjIuMiIgZmlsbD0iIzk3OGY3ZiIgZmlsbC1vcGFjaXR5PSIwLjgiLz48Y2lyY2xlIGN4PSIxNTAiIGN5PSIyMTgiIHI9IjIuMiIgZmlsbD0iIzk3OGY3ZiIgZmlsbC1vcGFjaXR5PSIwLjgiLz48Y2lyY2xlIGN4PSIxNTAiIGN5PSIyNDQiIHI9IjIuMiIgZmlsbD0iIzk3OGY3ZiIgZmlsbC1vcGFjaXR5PSIwLjgiLz48L2c+PC9nPjwvc3ZnPg==" alt="Gömlek manken üzerinde"><figcaption><span>KMS-00142</span><span>gömlek</span></figcaption></figure>
+      <figure class="look" style="margin:0"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDAwIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjgwMCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJiZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI0Y3RjVGMiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0VDRThFMyIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJza2luIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMCI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjRDlDOUI5Ii8+PHN0b3Agb2Zmc2V0PSIuNSIgc3RvcC1jb2xvcj0iI0VFRTNENyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0NEQkJBOSIvPjwvbGluZWFyR3JhZGllbnQ+PGZpbHRlciBpZD0ic2giIHg9Ii0yMCUiIHk9Ii0yMCUiIHdpZHRoPSIxNDAlIiBoZWlnaHQ9IjE0MCUiPjxmZURyb3BTaGFkb3cgZHg9IjAiIGR5PSI2IiBzdGREZXZpYXRpb249IjYiIGZsb29kLW9wYWNpdHk9IjAuMjIiLz48L2ZpbHRlcj48bGluZWFyR3JhZGllbnQgaWQ9Im1zIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9IjAuNDE1MDAwMDAwMDAwMDAwMDQiLz48c3RvcCBvZmZzZXQ9Ii40NSIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIwIi8+PHN0b3Agb2Zmc2V0PSIuNjIiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMC4xOTgiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwMDAiIHN0b3Atb3BhY2l0eT0iMC4yNyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iNDAwIiBmaWxsPSJ1cmwoI2JnKSIvPjxnIGZpbHRlcj0idXJsKCNzaCkiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE1MCAyMDApIHNjYWxlKDEuMSkgdHJhbnNsYXRlKC0xNTAgLTIyNikiPjxwYXRoIGQ9Ik0xMTQgMTA2TDEzMiAxMDRRMTUwIDExOCAxNjggMTA0TDE4NiAxMDZMMTkyIDE1MFExODYgMTkwIDE5MCAyMDVMMjM0IDMzNFExNTAgMzQ4IDY2IDMzNEwxMTAgMjA1UTExNCAxOTAgMTA4IDE1MFoiIGZpbGw9IiNCMzI2M0UiLz48cGF0aCBkPSJNMTE0IDEwNkwxMzIgMTA0UTE1MCAxMTggMTY4IDEwNEwxODYgMTA2TDE5MiAxNTBRMTg2IDE5MCAxOTAgMjA1TDIzNCAzMzRRMTUwIDM0OCA2NiAzMzRMMTEwIDIwNVExMTQgMTkwIDEwOCAxNTBaIiBmaWxsPSJ1cmwoI21zKSIvPjxwYXRoIGQ9Ik0xMTAgMjA1UTE1MCAyMTQgMTkwIDIwNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNzQxOTI4IiBzdHJva2Utd2lkdGg9IjEuNCIgc3Ryb2tlLW9wYWNpdHk9IjAuNyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9nPjwvc3ZnPg==" alt="Elbise, düz çekim"><img class="after" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDAwIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjgwMCI+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJiZyIgY3g9Ii41IiBjeT0iLjM1IiByPSIuOCI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjRjFFQ0U2Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRDlDRkM1Ii8+PC9yYWRpYWxHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9InNraW4iIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIwIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNEOUM5QjkiLz48c3RvcCBvZmZzZXQ9Ii41IiBzdG9wLWNvbG9yPSIjRUVFM0Q3Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjQ0RCQkE5Ii8+PC9saW5lYXJHcmFkaWVudD48ZmlsdGVyIGlkPSJzaCIgeD0iLTIwJSIgeT0iLTIwJSIgd2lkdGg9IjE0MCUiIGhlaWdodD0iMTQwJSI+PGZlRHJvcFNoYWRvdyBkeD0iMCIgZHk9IjIiIHN0ZERldmlhdGlvbj0iMiIgZmxvb2Qtb3BhY2l0eT0iMC4xOCIvPjwvZmlsdGVyPjxsaW5lYXJHcmFkaWVudCBpZD0ibXMiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMC40MTUwMDAwMDAwMDAwMDAwNCIvPjxzdG9wIG9mZnNldD0iLjQ1IiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9IjAiLz48c3RvcCBvZmZzZXQ9Ii42MiIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIwLjE5OCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAwMCIgc3RvcC1vcGFjaXR5PSIwLjI3Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSI0MDAiIGZpbGw9InVybCgjYmcpIi8+PGVsbGlwc2UgY3g9IjE1MCIgY3k9IjM5NCIgcng9IjcwIiByeT0iNyIgZmlsbD0iIzAwMCIgZmlsbC1vcGFjaXR5PSIuMTIiLz48Zz4KPGcgZmlsbD0idXJsKCNza2luKSI+CiAgPGVsbGlwc2UgY3g9IjE1MCIgY3k9IjU0IiByeD0iMjMiIHJ5PSIyOCIvPgogIDxwYXRoIGQ9Ik0xNDEgNzZIMTU5TDE2MSAxMDRIMTM5WiIvPgogIDxwYXRoIGQ9Ik0xMDAgMTA4UTE1MCA5NiAyMDAgMTA4UTIwNyAxNjAgMTkwIDIwNVEyMDAgMjMwIDE5OCAyNTJMMTAyIDI1MlExMDAgMjMwIDExMCAyMDVROTMgMTYwIDEwMCAxMDhaIi8+CiAgPGVsbGlwc2UgY3g9IjEwMSIgY3k9IjExNSIgcng9IjExIiByeT0iOSIvPjxlbGxpcHNlIGN4PSIxOTkiIGN5PSIxMTUiIHJ4PSIxMSIgcnk9IjkiLz4KICA8cGF0aCBkPSJNMTA0IDI0OEwxNDggMjQ4TDE0MiAzOTJMMTE4IDM5MloiLz48cGF0aCBkPSJNMTUyIDI0OEwxOTYgMjQ4TDE4MiAzOTJMMTU4IDM5MloiLz4KPC9nPjxnIGZpbHRlcj0idXJsKCNzaCkiPjxwYXRoIGQ9Ik0xMTQgMTA2TDEzMiAxMDRRMTUwIDExOCAxNjggMTA0TDE4NiAxMDZMMTkyIDE1MFExODYgMTkwIDE5MCAyMDVMMjM0IDMzNFExNTAgMzQ4IDY2IDMzNEwxMTAgMjA1UTExNCAxOTAgMTA4IDE1MFoiIGZpbGw9IiNCMzI2M0UiLz48cGF0aCBkPSJNMTE0IDEwNkwxMzIgMTA0UTE1MCAxMTggMTY4IDEwNEwxODYgMTA2TDE5MiAxNTBRMTg2IDE5MCAxOTAgMjA1TDIzNCAzMzRRMTUwIDM0OCA2NiAzMzRMMTEwIDIwNVExMTQgMTkwIDEwOCAxNTBaIiBmaWxsPSJ1cmwoI21zKSIvPjxwYXRoIGQ9Ik0xMTAgMjA1UTE1MCAyMTQgMTkwIDIwNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNzQxOTI4IiBzdHJva2Utd2lkdGg9IjEuNCIgc3Ryb2tlLW9wYWNpdHk9IjAuNyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9nPjwvZz48L3N2Zz4=" alt="Elbise manken üzerinde"><figcaption><span>KMS-00143</span><span>elbise</span></figcaption></figure>
+      <figure class="look" style="margin:0"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDAwIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjgwMCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJiZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI0Y3RjVGMiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0VDRThFMyIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJza2luIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMCI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjRDlDOUI5Ii8+PHN0b3Agb2Zmc2V0PSIuNSIgc3RvcC1jb2xvcj0iI0VFRTNENyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0NEQkJBOSIvPjwvbGluZWFyR3JhZGllbnQ+PGZpbHRlciBpZD0ic2giIHg9Ii0yMCUiIHk9Ii0yMCUiIHdpZHRoPSIxNDAlIiBoZWlnaHQ9IjE0MCUiPjxmZURyb3BTaGFkb3cgZHg9IjAiIGR5PSI2IiBzdGREZXZpYXRpb249IjYiIGZsb29kLW9wYWNpdHk9IjAuMjIiLz48L2ZpbHRlcj48bGluZWFyR3JhZGllbnQgaWQ9Im1zIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9IjAuMTE3NTAwMDAwMDAwMDAwMDEiLz48c3RvcCBvZmZzZXQ9Ii40NSIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIwIi8+PHN0b3Agb2Zmc2V0PSIuNjIiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMC4wMTEwMDAwMDAwMDAwMDAwMDEiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwMDAiIHN0b3Atb3BhY2l0eT0iMC4xODUiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0idXJsKCNiZykiLz48ZyBmaWx0ZXI9InVybCgjc2gpIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNTAgMjAwKSBzY2FsZSgxLjE1KSB0cmFuc2xhdGUoLTE1MCAtMTgyKSI+PHBhdGggZD0iTTEwMCAxMDhRMTUwIDk2IDIwMCAxMDhMMjI2IDE0MEwyNDAgMjU0TDIyMCAyNThMMjA0IDE2NEwxOTggMjU0UTE1MCAyNjIgMTAyIDI1NEw5NiAxNjRMODAgMjU4TDYwIDI1NEw3NCAxNDBaIiBmaWxsPSIjOEE5QTVCIi8+PHBhdGggZD0iTTEwMCAxMDhRMTUwIDk2IDIwMCAxMDhMMjI2IDE0MEwyNDAgMjU0TDIyMCAyNThMMjA0IDE2NEwxOTggMjU0UTE1MCAyNjIgMTAyIDI1NEw5NiAxNjRMODAgMjU4TDYwIDI1NEw3NCAxNDBaIiBmaWxsPSJ1cmwoI21zKSIvPjxwYXRoIGQ9Ik0xMzIgMTAzUTE1MCAxMjIgMTY4IDEwM1ExNTAgMTEwIDEzMiAxMDNaIiBmaWxsPSIjNWE2NDNiIi8+PHBhdGggZD0iTTEwNiAyNDJWMjU2IiBmaWxsPSJub25lIiBzdHJva2U9IiM1YTY0M2IiIHN0cm9rZS13aWR0aD0iMSIgc3Ryb2tlLW9wYWNpdHk9IjAuNDUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMTIgMjQyVjI1NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNWE2NDNiIiBzdHJva2Utd2lkdGg9IjEiIHN0cm9rZS1vcGFjaXR5PSIwLjQ1IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTE4IDI0MlYyNTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzVhNjQzYiIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2Utb3BhY2l0eT0iMC40NSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTEyNCAyNDJWMjU2IiBmaWxsPSJub25lIiBzdHJva2U9IiM1YTY0M2IiIHN0cm9rZS13aWR0aD0iMSIgc3Ryb2tlLW9wYWNpdHk9IjAuNDUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMzAgMjQyVjI1NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNWE2NDNiIiBzdHJva2Utd2lkdGg9IjEiIHN0cm9rZS1vcGFjaXR5PSIwLjQ1IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTM2IDI0MlYyNTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzVhNjQzYiIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2Utb3BhY2l0eT0iMC40NSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE0MiAyNDJWMjU2IiBmaWxsPSJub25lIiBzdHJva2U9IiM1YTY0M2IiIHN0cm9rZS13aWR0aD0iMSIgc3Ryb2tlLW9wYWNpdHk9IjAuNDUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xNDggMjQyVjI1NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNWE2NDNiIiBzdHJva2Utd2lkdGg9IjEiIHN0cm9rZS1vcGFjaXR5PSIwLjQ1IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTU0IDI0MlYyNTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzVhNjQzYiIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2Utb3BhY2l0eT0iMC40NSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE2MCAyNDJWMjU2IiBmaWxsPSJub25lIiBzdHJva2U9IiM1YTY0M2IiIHN0cm9rZS13aWR0aD0iMSIgc3Ryb2tlLW9wYWNpdHk9IjAuNDUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xNjYgMjQyVjI1NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNWE2NDNiIiBzdHJva2Utd2lkdGg9IjEiIHN0cm9rZS1vcGFjaXR5PSIwLjQ1IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTcyIDI0MlYyNTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzVhNjQzYiIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2Utb3BhY2l0eT0iMC40NSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE3OCAyNDJWMjU2IiBmaWxsPSJub25lIiBzdHJva2U9IiM1YTY0M2IiIHN0cm9rZS13aWR0aD0iMSIgc3Ryb2tlLW9wYWNpdHk9IjAuNDUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xODQgMjQyVjI1NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNWE2NDNiIiBzdHJva2Utd2lkdGg9IjEiIHN0cm9rZS1vcGFjaXR5PSIwLjQ1IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTkwIDI0MlYyNTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzVhNjQzYiIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2Utb3BhY2l0eT0iMC40NSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9nPjwvc3ZnPg==" alt="Kazak, düz çekim"><img class="after" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDAwIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjgwMCI+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJiZyIgY3g9Ii41IiBjeT0iLjM1IiByPSIuOCI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjRjFFQ0U2Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRDlDRkM1Ii8+PC9yYWRpYWxHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9InNraW4iIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIwIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNEOUM5QjkiLz48c3RvcCBvZmZzZXQ9Ii41IiBzdG9wLWNvbG9yPSIjRUVFM0Q3Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjQ0RCQkE5Ii8+PC9saW5lYXJHcmFkaWVudD48ZmlsdGVyIGlkPSJzaCIgeD0iLTIwJSIgeT0iLTIwJSIgd2lkdGg9IjE0MCUiIGhlaWdodD0iMTQwJSI+PGZlRHJvcFNoYWRvdyBkeD0iMCIgZHk9IjIiIHN0ZERldmlhdGlvbj0iMiIgZmxvb2Qtb3BhY2l0eT0iMC4xOCIvPjwvZmlsdGVyPjxsaW5lYXJHcmFkaWVudCBpZD0iYnMiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMC4xMzUiLz48c3RvcCBvZmZzZXQ9Ii40NSIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIwIi8+PHN0b3Agb2Zmc2V0PSIuNjIiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMC4wMjIwMDAwMDAwMDAwMDAwMDIiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwMDAiIHN0b3Atb3BhY2l0eT0iMC4xOSIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJtcyIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIwLjExNzUwMDAwMDAwMDAwMDAxIi8+PHN0b3Agb2Zmc2V0PSIuNDUiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMCIvPjxzdG9wIG9mZnNldD0iLjYyIiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9IjAuMDExMDAwMDAwMDAwMDAwMDAxIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDAwIiBzdG9wLW9wYWNpdHk9IjAuMTg1Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSI0MDAiIGZpbGw9InVybCgjYmcpIi8+PGVsbGlwc2UgY3g9IjE1MCIgY3k9IjM5NCIgcng9IjcwIiByeT0iNyIgZmlsbD0iIzAwMCIgZmlsbC1vcGFjaXR5PSIuMTIiLz48Zz4KPGcgZmlsbD0idXJsKCNza2luKSI+CiAgPGVsbGlwc2UgY3g9IjE1MCIgY3k9IjU0IiByeD0iMjMiIHJ5PSIyOCIvPgogIDxwYXRoIGQ9Ik0xNDEgNzZIMTU5TDE2MSAxMDRIMTM5WiIvPgogIDxwYXRoIGQ9Ik0xMDAgMTA4UTE1MCA5NiAyMDAgMTA4UTIwNyAxNjAgMTkwIDIwNVEyMDAgMjMwIDE5OCAyNTJMMTAyIDI1MlExMDAgMjMwIDExMCAyMDVROTMgMTYwIDEwMCAxMDhaIi8+CiAgPGVsbGlwc2UgY3g9IjEwMSIgY3k9IjExNSIgcng9IjExIiByeT0iOSIvPjxlbGxpcHNlIGN4PSIxOTkiIGN5PSIxMTUiIHJ4PSIxMSIgcnk9IjkiLz4KICA8cGF0aCBkPSJNMTA0IDI0OEwxNDggMjQ4TDE0MiAzOTJMMTE4IDM5MloiLz48cGF0aCBkPSJNMTUyIDI0OEwxOTYgMjQ4TDE4MiAzOTJMMTU4IDM5MloiLz4KPC9nPjxnIGZpbHRlcj0idXJsKCNzaCkiPjxwYXRoIGQ9Ik0xMTAgMTk4UTE1MCAyMDQgMTkwIDE5OEwxOTYgMzg2TDE2MCAzODhMMTUxIDI1NEwxNDkgMjU0TDE0MCAzODhMMTA0IDM4NloiIGZpbGw9IiMyQzNCNUUiLz48cGF0aCBkPSJNMTEwIDE5OFExNTAgMjA0IDE5MCAxOThMMTk2IDM4NkwxNjAgMzg4TDE1MSAyNTRMMTQ5IDI1NEwxNDAgMzg4TDEwNCAzODZaIiBmaWxsPSJ1cmwoI2JzKSIvPjxwYXRoIGQ9Ik0xMTAgMTk4UTE1MCAyMDQgMTkwIDE5OEwxOTAuNiAyMTBRMTUwIDIxNiAxMDkuNiAyMTBaIiBmaWxsPSIjMWQyNjNkIiBmaWxsLW9wYWNpdHk9Ii41Ii8+PHBhdGggZD0iTTE1MCAyMTJWMjQ2IiBmaWxsPSJub25lIiBzdHJva2U9IiMxZDI2M2QiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2Utb3BhY2l0eT0iMC43IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTE4IDIxNFExMjYgMjI4IDE0MCAyMjIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzFkMjYzZCIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2Utb3BhY2l0eT0iMC43IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTAwIDEwOFExNTAgOTYgMjAwIDEwOEwyMTYgMTE2TDIyMCAyNjhMMjAzIDI2OEwyMDAgMTU0TDE5OCAyNTRRMTUwIDI2MiAxMDIgMjU0TDEwMCAxNTRMOTcgMjY4TDgwIDI2OEw4NCAxMTZaIiBmaWxsPSIjOEE5QTVCIi8+PHBhdGggZD0iTTEwMCAxMDhRMTUwIDk2IDIwMCAxMDhMMjE2IDExNkwyMjAgMjY4TDIwMyAyNjhMMjAwIDE1NEwxOTggMjU0UTE1MCAyNjIgMTAyIDI1NEwxMDAgMTU0TDk3IDI2OEw4MCAyNjhMODQgMTE2WiIgZmlsbD0idXJsKCNtcykiLz48cGF0aCBkPSJNMTMyIDEwM1ExNTAgMTIyIDE2OCAxMDNRMTUwIDExMCAxMzIgMTAzWiIgZmlsbD0iIzVhNjQzYiIvPjxwYXRoIGQ9Ik0xMDYgMjQyVjI1NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNWE2NDNiIiBzdHJva2Utd2lkdGg9IjEiIHN0cm9rZS1vcGFjaXR5PSIwLjQ1IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTEyIDI0MlYyNTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzVhNjQzYiIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2Utb3BhY2l0eT0iMC40NSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTExOCAyNDJWMjU2IiBmaWxsPSJub25lIiBzdHJva2U9IiM1YTY0M2IiIHN0cm9rZS13aWR0aD0iMSIgc3Ryb2tlLW9wYWNpdHk9IjAuNDUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMjQgMjQyVjI1NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNWE2NDNiIiBzdHJva2Utd2lkdGg9IjEiIHN0cm9rZS1vcGFjaXR5PSIwLjQ1IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTMwIDI0MlYyNTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzVhNjQzYiIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2Utb3BhY2l0eT0iMC40NSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTEzNiAyNDJWMjU2IiBmaWxsPSJub25lIiBzdHJva2U9IiM1YTY0M2IiIHN0cm9rZS13aWR0aD0iMSIgc3Ryb2tlLW9wYWNpdHk9IjAuNDUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xNDIgMjQyVjI1NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNWE2NDNiIiBzdHJva2Utd2lkdGg9IjEiIHN0cm9rZS1vcGFjaXR5PSIwLjQ1IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTQ4IDI0MlYyNTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzVhNjQzYiIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2Utb3BhY2l0eT0iMC40NSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE1NCAyNDJWMjU2IiBmaWxsPSJub25lIiBzdHJva2U9IiM1YTY0M2IiIHN0cm9rZS13aWR0aD0iMSIgc3Ryb2tlLW9wYWNpdHk9IjAuNDUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xNjAgMjQyVjI1NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNWE2NDNiIiBzdHJva2Utd2lkdGg9IjEiIHN0cm9rZS1vcGFjaXR5PSIwLjQ1IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTY2IDI0MlYyNTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzVhNjQzYiIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2Utb3BhY2l0eT0iMC40NSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE3MiAyNDJWMjU2IiBmaWxsPSJub25lIiBzdHJva2U9IiM1YTY0M2IiIHN0cm9rZS13aWR0aD0iMSIgc3Ryb2tlLW9wYWNpdHk9IjAuNDUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xNzggMjQyVjI1NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNWE2NDNiIiBzdHJva2Utd2lkdGg9IjEiIHN0cm9rZS1vcGFjaXR5PSIwLjQ1IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTg0IDI0MlYyNTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzVhNjQzYiIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2Utb3BhY2l0eT0iMC40NSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE5MCAyNDJWMjU2IiBmaWxsPSJub25lIiBzdHJva2U9IiM1YTY0M2IiIHN0cm9rZS13aWR0aD0iMSIgc3Ryb2tlLW9wYWNpdHk9IjAuNDUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvZz48L2c+PC9zdmc+" alt="Kazak manken üzerinde"><figcaption><span>KMS-00144</span><span>kazak</span></figcaption></figure>
+      <div class="scan__note"><span>düz çekim</span><span>← tarama →</span><span>manken üzerinde</span></div>
+    </div>
+  </div>
+  <div class="facts">
+    <div class="fact"><b>2</b><span>platform, tek kod tabanı</span></div>
+    <div class="fact"><b>~2 dk</b><span>çekimden onay ekranına</span></div>
+    <div class="fact"><b>$0,40</b><span>ürün başına görsel maliyeti, tahminî</span></div>
+    <div class="fact"><b>~8 sn</b><span>Kabin'de bir deneme</span></div>
+  </div>
+</header>
+
+<main>
+  <section class="sec wrap" id="sistem">
+    <div class="head">
+      <div class="head__idx"><b>01</b><span class="label">Sistem</span></div>
+      <div class="head__body">
+        <h2>İki uygulama, <span class="it">tek çekirdek.</span></h2>
+        <p>Arka uç zaten çalışıyor: iş kuyruğu, Claude ile ürün tanıma, onay ve site yayını hazır. Yeni olan iki uç: personelin telefonu ve müşterinin kabini. İkisi de aynı ürün kaydını ve aynı kesilmiş ürün görselini kullanıyor.</p>
+      </div>
+    </div>
+    <div class="system">
+      <div class="sys">
+        <span class="label">Personel · iOS + Android</span>
+        <h3>Atölye</h3>
+        <ul>
+          <li>Kamerayla çekim, hizalama <span class="st st--new">yeni</span></li>
+          <li>Parçaları kontrol et, düzelt <span class="st st--new">yeni</span></li>
+          <li>Manken görseli seç, yeniden üret <span class="st st--new">yeni</span></li>
+          <li>Fiyat, beden stoğu, tek tuşla yayın <span class="st st--new">yeni</span></li>
+          <li>Sipariş ve stok bildirimleri <span class="st st--new">yeni</span></li>
+        </ul>
+      </div>
+      <div class="sys sys--core">
+        <span class="label">Çekirdek · Railway</span>
+        <h3>Kumash portalı</h3>
+        <ul>
+          <li>Ürün, varyant, sipariş veritabanı <span class="st st--ok">hazır</span></li>
+          <li>İş kuyruğu ve tekrar deneme <span class="st st--ok">hazır</span></li>
+          <li>Claude ile parça tanıma ve metin <span class="st st--ok">hazır</span></li>
+          <li>Onay ve site yayını <span class="st st--ok">hazır</span></li>
+          <li>Uygulama API'si, token girişi <span class="st st--new">yeni</span></li>
+          <li>Mankene giydirme servisi <span class="st st--new">yeni</span></li>
+          <li>Bulut depolama (R2) <span class="st st--new">yeni</span></li>
+          <li>Trendyol, Instagram, Facebook <span class="st st--new">yeni</span></li>
+        </ul>
+      </div>
+      <div class="sys">
+        <span class="label">Müşteri · kumash sitesi</span>
+        <h3>Kabin</h3>
+        <ul>
+          <li>Ürün sayfası, sepet, sipariş <span class="st st--ok">hazır</span></li>
+          <li>"Üzerinde dene" düğmesi <span class="st st--new">yeni</span></li>
+          <li>Hazır model ya da kendi fotoğrafı <span class="st st--new">yeni</span></li>
+          <li>Kombini üst üste deneme <span class="st st--new">yeni</span></li>
+          <li>Açık rıza, 24 saatte silme, kota <span class="st st--new">yeni</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="seam"></div>
+  </section>
+
+  <section class="sec wrap" id="atolye">
+    <div class="head">
+      <div class="head__idx"><b>02</b><span class="label">Atölye</span></div>
+      <div class="head__body">
+        <h2>Masadan vitrine <span class="it">dört ekran.</span></h2>
+        <p>Personelin işi fotoğraf çekmek ve kontrol etmek. Tanıma, metin, giydirme ve dağıtım arka planda dönüyor; sonuç hazır olunca telefona bildirim geliyor.</p>
+      </div>
+    </div>
+
+    <div class="demo">
+      <div class="devices" id="devices">
+        <div class="phone on" data-i="0"><div class="scr">
+          <div class="scr__bar"><span>09:41</span><i></i><span>5G</span></div>
+          <div class="vf">
+            <div class="vf__hint">3 parça bulundu · sabit tut</div>
+            <div class="box" data-l="01"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDAwIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjgwMCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJiZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI0Y3RjVGMiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0VDRThFMyIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJza2luIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMCI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjRDlDOUI5Ii8+PHN0b3Agb2Zmc2V0PSIuNSIgc3RvcC1jb2xvcj0iI0VFRTNENyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0NEQkJBOSIvPjwvbGluZWFyR3JhZGllbnQ+PGZpbHRlciBpZD0ic2giIHg9Ii0yMCUiIHk9Ii0yMCUiIHdpZHRoPSIxNDAlIiBoZWlnaHQ9IjE0MCUiPjxmZURyb3BTaGFkb3cgZHg9IjAiIGR5PSI2IiBzdGREZXZpYXRpb249IjYiIGZsb29kLW9wYWNpdHk9IjAuMjIiLz48L2ZpbHRlcj48bGluZWFyR3JhZGllbnQgaWQ9Im1zIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9IjAuNDE1MDAwMDAwMDAwMDAwMDQiLz48c3RvcCBvZmZzZXQ9Ii40NSIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIwIi8+PHN0b3Agb2Zmc2V0PSIuNjIiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMC4xOTgiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwMDAiIHN0b3Atb3BhY2l0eT0iMC4yNyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iNDAwIiBmaWxsPSJ1cmwoI2JnKSIvPjxnIGZpbHRlcj0idXJsKCNzaCkiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE1MCAyMDApIHNjYWxlKDEuMSkgdHJhbnNsYXRlKC0xNTAgLTIyNikiPjxwYXRoIGQ9Ik0xMTQgMTA2TDEzMiAxMDRRMTUwIDExOCAxNjggMTA0TDE4NiAxMDZMMTkyIDE1MFExODYgMTkwIDE5MCAyMDVMMjM0IDMzNFExNTAgMzQ4IDY2IDMzNEwxMTAgMjA1UTExNCAxOTAgMTA4IDE1MFoiIGZpbGw9IiNCMzI2M0UiLz48cGF0aCBkPSJNMTE0IDEwNkwxMzIgMTA0UTE1MCAxMTggMTY4IDEwNEwxODYgMTA2TDE5MiAxNTBRMTg2IDE5MCAxOTAgMjA1TDIzNCAzMzRRMTUwIDM0OCA2NiAzMzRMMTEwIDIwNVExMTQgMTkwIDEwOCAxNTBaIiBmaWxsPSJ1cmwoI21zKSIvPjxwYXRoIGQ9Ik0xMTAgMjA1UTE1MCAyMTQgMTkwIDIwNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNzQxOTI4IiBzdHJva2Utd2lkdGg9IjEuNCIgc3Ryb2tlLW9wYWNpdHk9IjAuNyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9nPjwvc3ZnPg==" alt=""></div>
+            <div class="box" data-l="02"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDAwIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjgwMCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJiZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI0Y3RjVGMiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0VDRThFMyIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJza2luIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMCI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjRDlDOUI5Ii8+PHN0b3Agb2Zmc2V0PSIuNSIgc3RvcC1jb2xvcj0iI0VFRTNENyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0NEQkJBOSIvPjwvbGluZWFyR3JhZGllbnQ+PGZpbHRlciBpZD0ic2giIHg9Ii0yMCUiIHk9Ii0yMCUiIHdpZHRoPSIxNDAlIiBoZWlnaHQ9IjE0MCUiPjxmZURyb3BTaGFkb3cgZHg9IjAiIGR5PSI2IiBzdGREZXZpYXRpb249IjYiIGZsb29kLW9wYWNpdHk9IjAuMjIiLz48L2ZpbHRlcj48bGluZWFyR3JhZGllbnQgaWQ9Im1zIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9IjAuMTYzIi8+PHN0b3Agb2Zmc2V0PSIuNDUiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMCIvPjxzdG9wIG9mZnNldD0iLjYyIiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9IjAuMDM5NTk5OTk5OTk5OTk5OTk2Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDAwIiBzdG9wLW9wYWNpdHk9IjAuMTk3OTk5OTk5OTk5OTk5OTgiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0idXJsKCNiZykiLz48ZyBmaWx0ZXI9InVybCgjc2gpIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNTAgMjAwKSBzY2FsZSgxLjE1KSB0cmFuc2xhdGUoLTE1MCAtMTgyKSI+PHBhdGggZD0iTTEwMCAxMDhRMTUwIDk2IDIwMCAxMDhMMjI2IDE0MEwyNDAgMjU4TDIyMCAyNjJMMjA0IDE2NEwxOTggMjU4UTE1MCAyNjYgMTAyIDI1OEw5NiAxNjRMODAgMjYyTDYwIDI1OEw3NCAxNDBaIiBmaWxsPSIjRThEQ0M0Ii8+PHBhdGggZD0iTTEwMCAxMDhRMTUwIDk2IDIwMCAxMDhMMjI2IDE0MEwyNDAgMjU4TDIyMCAyNjJMMjA0IDE2NEwxOTggMjU4UTE1MCAyNjYgMTAyIDI1OEw5NiAxNjRMODAgMjYyTDYwIDI1OEw3NCAxNDBaIiBmaWxsPSJ1cmwoI21zKSIvPjxwYXRoIGQ9Ik0xMzAgMTAxTDE1MCAxMjRMMTQwIDEzMkwxMjQgMTA4WiIgZmlsbD0iI2VlZTVkMyIvPjxwYXRoIGQ9Ik0xNzAgMTAxTDE1MCAxMjRMMTYwIDEzMkwxNzYgMTA4WiIgZmlsbD0iI2VlZTVkMyIvPjxwYXRoIGQ9Ik0xNTAgMTI0VjI1OCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOTc4ZjdmIiBzdHJva2Utd2lkdGg9IjEiIHN0cm9rZS1vcGFjaXR5PSIwLjciIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjE1MCIgY3k9IjE0MCIgcj0iMi4yIiBmaWxsPSIjOTc4ZjdmIiBmaWxsLW9wYWNpdHk9IjAuOCIvPjxjaXJjbGUgY3g9IjE1MCIgY3k9IjE2NiIgcj0iMi4yIiBmaWxsPSIjOTc4ZjdmIiBmaWxsLW9wYWNpdHk9IjAuOCIvPjxjaXJjbGUgY3g9IjE1MCIgY3k9IjE5MiIgcj0iMi4yIiBmaWxsPSIjOTc4ZjdmIiBmaWxsLW9wYWNpdHk9IjAuOCIvPjxjaXJjbGUgY3g9IjE1MCIgY3k9IjIxOCIgcj0iMi4yIiBmaWxsPSIjOTc4ZjdmIiBmaWxsLW9wYWNpdHk9IjAuOCIvPjxjaXJjbGUgY3g9IjE1MCIgY3k9IjI0NCIgcj0iMi4yIiBmaWxsPSIjOTc4ZjdmIiBmaWxsLW9wYWNpdHk9IjAuOCIvPjwvZz48L3N2Zz4=" alt=""></div>
+            <div class="box" data-l="03"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDAwIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjgwMCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJiZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI0Y3RjVGMiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0VDRThFMyIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJza2luIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMCI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjRDlDOUI5Ii8+PHN0b3Agb2Zmc2V0PSIuNSIgc3RvcC1jb2xvcj0iI0VFRTNENyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0NEQkJBOSIvPjwvbGluZWFyR3JhZGllbnQ+PGZpbHRlciBpZD0ic2giIHg9Ii0yMCUiIHk9Ii0yMCUiIHdpZHRoPSIxNDAlIiBoZWlnaHQ9IjE0MCUiPjxmZURyb3BTaGFkb3cgZHg9IjAiIGR5PSI2IiBzdGREZXZpYXRpb249IjYiIGZsb29kLW9wYWNpdHk9IjAuMjIiLz48L2ZpbHRlcj48bGluZWFyR3JhZGllbnQgaWQ9Im1zIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9IjAuMTE3NTAwMDAwMDAwMDAwMDEiLz48c3RvcCBvZmZzZXQ9Ii40NSIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIwIi8+PHN0b3Agb2Zmc2V0PSIuNjIiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMC4wMTEwMDAwMDAwMDAwMDAwMDEiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwMDAiIHN0b3Atb3BhY2l0eT0iMC4xODUiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0idXJsKCNiZykiLz48ZyBmaWx0ZXI9InVybCgjc2gpIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNTAgMjAwKSBzY2FsZSgxLjQpIHRyYW5zbGF0ZSgtMTUwIC0yOTMpIj48cGF0aCBkPSJNMTEwIDE5OFExNTAgMjA0IDE5MCAxOThMMTk2IDM4NkwxNjAgMzg4TDE1MSAyNTRMMTQ5IDI1NEwxNDAgMzg4TDEwNCAzODZaIiBmaWxsPSIjMjIzMDRBIi8+PHBhdGggZD0iTTExMCAxOThRMTUwIDIwNCAxOTAgMTk4TDE5NiAzODZMMTYwIDM4OEwxNTEgMjU0TDE0OSAyNTRMMTQwIDM4OEwxMDQgMzg2WiIgZmlsbD0idXJsKCNtcykiLz48cGF0aCBkPSJNMTEwIDE5OFExNTAgMjA0IDE5MCAxOThMMTkwLjYgMjEwUTE1MCAyMTYgMTA5LjYgMjEwWiIgZmlsbD0iIzE2MWYzMCIgZmlsbC1vcGFjaXR5PSIuNSIvPjxwYXRoIGQ9Ik0xNTAgMjEyVjI0NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTYxZjMwIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLW9wYWNpdHk9IjAuNyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTExOCAyMTRRMTI2IDIyOCAxNDAgMjIyIiBmaWxsPSJub25lIiBzdHJva2U9IiMxNjFmMzAiIHN0cm9rZS13aWR0aD0iMSIgc3Ryb2tlLW9wYWNpdHk9IjAuNyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9nPjwvc3ZnPg==" alt=""></div>
+          </div>
+          <div class="shut"><span>Galeri</span><i></i><span>Yakın plan</span></div>
+        </div></div>
+        <div class="phone" data-i="1"><div class="scr">
+          <div class="scr__bar"><span>09:42</span><i></i><span>5G</span></div>
+          <div class="scr__h"><b>Parçalar</b><small>ÇEKİM #0142</small></div>
+          <div class="scr__b">
+            <div class="it-row"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDAwIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjgwMCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJiZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI0Y3RjVGMiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0VDRThFMyIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJza2luIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMCI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjRDlDOUI5Ii8+PHN0b3Agb2Zmc2V0PSIuNSIgc3RvcC1jb2xvcj0iI0VFRTNENyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0NEQkJBOSIvPjwvbGluZWFyR3JhZGllbnQ+PGZpbHRlciBpZD0ic2giIHg9Ii0yMCUiIHk9Ii0yMCUiIHdpZHRoPSIxNDAlIiBoZWlnaHQ9IjE0MCUiPjxmZURyb3BTaGFkb3cgZHg9IjAiIGR5PSI2IiBzdGREZXZpYXRpb249IjYiIGZsb29kLW9wYWNpdHk9IjAuMjIiLz48L2ZpbHRlcj48bGluZWFyR3JhZGllbnQgaWQ9Im1zIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9IjAuNDE1MDAwMDAwMDAwMDAwMDQiLz48c3RvcCBvZmZzZXQ9Ii40NSIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIwIi8+PHN0b3Agb2Zmc2V0PSIuNjIiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMC4xOTgiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwMDAiIHN0b3Atb3BhY2l0eT0iMC4yNyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iNDAwIiBmaWxsPSJ1cmwoI2JnKSIvPjxnIGZpbHRlcj0idXJsKCNzaCkiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE1MCAyMDApIHNjYWxlKDEuMSkgdHJhbnNsYXRlKC0xNTAgLTIyNikiPjxwYXRoIGQ9Ik0xMTQgMTA2TDEzMiAxMDRRMTUwIDExOCAxNjggMTA0TDE4NiAxMDZMMTkyIDE1MFExODYgMTkwIDE5MCAyMDVMMjM0IDMzNFExNTAgMzQ4IDY2IDMzNEwxMTAgMjA1UTExNCAxOTAgMTA4IDE1MFoiIGZpbGw9IiNCMzI2M0UiLz48cGF0aCBkPSJNMTE0IDEwNkwxMzIgMTA0UTE1MCAxMTggMTY4IDEwNEwxODYgMTA2TDE5MiAxNTBRMTg2IDE5MCAxOTAgMjA1TDIzNCAzMzRRMTUwIDM0OCA2NiAzMzRMMTEwIDIwNVExMTQgMTkwIDEwOCAxNTBaIiBmaWxsPSJ1cmwoI21zKSIvPjxwYXRoIGQ9Ik0xMTAgMjA1UTE1MCAyMTQgMTkwIDIwNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNzQxOTI4IiBzdHJva2Utd2lkdGg9IjEuNCIgc3Ryb2tlLW9wYWNpdHk9IjAuNyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9nPjwvc3ZnPg==" alt=""><div><b>Saten Midi Elbise</b><small>Kadın · Elbise · 1.290 ₺</small><div class="tags"><span>bordo</span><span>saten</span><span>düz</span></div></div></div>
+            <div class="it-row"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDAwIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjgwMCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJiZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI0Y3RjVGMiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0VDRThFMyIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJza2luIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMCI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjRDlDOUI5Ii8+PHN0b3Agb2Zmc2V0PSIuNSIgc3RvcC1jb2xvcj0iI0VFRTNENyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0NEQkJBOSIvPjwvbGluZWFyR3JhZGllbnQ+PGZpbHRlciBpZD0ic2giIHg9Ii0yMCUiIHk9Ii0yMCUiIHdpZHRoPSIxNDAlIiBoZWlnaHQ9IjE0MCUiPjxmZURyb3BTaGFkb3cgZHg9IjAiIGR5PSI2IiBzdGREZXZpYXRpb249IjYiIGZsb29kLW9wYWNpdHk9IjAuMjIiLz48L2ZpbHRlcj48bGluZWFyR3JhZGllbnQgaWQ9Im1zIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9IjAuMTYzIi8+PHN0b3Agb2Zmc2V0PSIuNDUiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMCIvPjxzdG9wIG9mZnNldD0iLjYyIiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9IjAuMDM5NTk5OTk5OTk5OTk5OTk2Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDAwIiBzdG9wLW9wYWNpdHk9IjAuMTk3OTk5OTk5OTk5OTk5OTgiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0idXJsKCNiZykiLz48ZyBmaWx0ZXI9InVybCgjc2gpIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNTAgMjAwKSBzY2FsZSgxLjE1KSB0cmFuc2xhdGUoLTE1MCAtMTgyKSI+PHBhdGggZD0iTTEwMCAxMDhRMTUwIDk2IDIwMCAxMDhMMjI2IDE0MEwyNDAgMjU4TDIyMCAyNjJMMjA0IDE2NEwxOTggMjU4UTE1MCAyNjYgMTAyIDI1OEw5NiAxNjRMODAgMjYyTDYwIDI1OEw3NCAxNDBaIiBmaWxsPSIjRThEQ0M0Ii8+PHBhdGggZD0iTTEwMCAxMDhRMTUwIDk2IDIwMCAxMDhMMjI2IDE0MEwyNDAgMjU4TDIyMCAyNjJMMjA0IDE2NEwxOTggMjU4UTE1MCAyNjYgMTAyIDI1OEw5NiAxNjRMODAgMjYyTDYwIDI1OEw3NCAxNDBaIiBmaWxsPSJ1cmwoI21zKSIvPjxwYXRoIGQ9Ik0xMzAgMTAxTDE1MCAxMjRMMTQwIDEzMkwxMjQgMTA4WiIgZmlsbD0iI2VlZTVkMyIvPjxwYXRoIGQ9Ik0xNzAgMTAxTDE1MCAxMjRMMTYwIDEzMkwxNzYgMTA4WiIgZmlsbD0iI2VlZTVkMyIvPjxwYXRoIGQ9Ik0xNTAgMTI0VjI1OCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOTc4ZjdmIiBzdHJva2Utd2lkdGg9IjEiIHN0cm9rZS1vcGFjaXR5PSIwLjciIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjE1MCIgY3k9IjE0MCIgcj0iMi4yIiBmaWxsPSIjOTc4ZjdmIiBmaWxsLW9wYWNpdHk9IjAuOCIvPjxjaXJjbGUgY3g9IjE1MCIgY3k9IjE2NiIgcj0iMi4yIiBmaWxsPSIjOTc4ZjdmIiBmaWxsLW9wYWNpdHk9IjAuOCIvPjxjaXJjbGUgY3g9IjE1MCIgY3k9IjE5MiIgcj0iMi4yIiBmaWxsPSIjOTc4ZjdmIiBmaWxsLW9wYWNpdHk9IjAuOCIvPjxjaXJjbGUgY3g9IjE1MCIgY3k9IjIxOCIgcj0iMi4yIiBmaWxsPSIjOTc4ZjdmIiBmaWxsLW9wYWNpdHk9IjAuOCIvPjxjaXJjbGUgY3g9IjE1MCIgY3k9IjI0NCIgcj0iMi4yIiBmaWxsPSIjOTc4ZjdmIiBmaWxsLW9wYWNpdHk9IjAuOCIvPjwvZz48L3N2Zz4=" alt=""><div><b>Oversize Poplin Gömlek</b><small>Kadın · Gömlek · 749 ₺</small><div class="tags"><span>krem</span><span>pamuk</span></div></div></div>
+            <div class="it-row"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDAwIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjgwMCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJiZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI0Y3RjVGMiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0VDRThFMyIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJza2luIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMCI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjRDlDOUI5Ii8+PHN0b3Agb2Zmc2V0PSIuNSIgc3RvcC1jb2xvcj0iI0VFRTNENyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0NEQkJBOSIvPjwvbGluZWFyR3JhZGllbnQ+PGZpbHRlciBpZD0ic2giIHg9Ii0yMCUiIHk9Ii0yMCUiIHdpZHRoPSIxNDAlIiBoZWlnaHQ9IjE0MCUiPjxmZURyb3BTaGFkb3cgZHg9IjAiIGR5PSI2IiBzdGREZXZpYXRpb249IjYiIGZsb29kLW9wYWNpdHk9IjAuMjIiLz48L2ZpbHRlcj48bGluZWFyR3JhZGllbnQgaWQ9Im1zIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9IjAuMTE3NTAwMDAwMDAwMDAwMDEiLz48c3RvcCBvZmZzZXQ9Ii40NSIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIwIi8+PHN0b3Agb2Zmc2V0PSIuNjIiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMC4wMTEwMDAwMDAwMDAwMDAwMDEiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwMDAiIHN0b3Atb3BhY2l0eT0iMC4xODUiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0idXJsKCNiZykiLz48ZyBmaWx0ZXI9InVybCgjc2gpIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNTAgMjAwKSBzY2FsZSgxLjQpIHRyYW5zbGF0ZSgtMTUwIC0yOTMpIj48cGF0aCBkPSJNMTEwIDE5OFExNTAgMjA0IDE5MCAxOThMMTk2IDM4NkwxNjAgMzg4TDE1MSAyNTRMMTQ5IDI1NEwxNDAgMzg4TDEwNCAzODZaIiBmaWxsPSIjMjIzMDRBIi8+PHBhdGggZD0iTTExMCAxOThRMTUwIDIwNCAxOTAgMTk4TDE5NiAzODZMMTYwIDM4OEwxNTEgMjU0TDE0OSAyNTRMMTQwIDM4OEwxMDQgMzg2WiIgZmlsbD0idXJsKCNtcykiLz48cGF0aCBkPSJNMTEwIDE5OFExNTAgMjA0IDE5MCAxOThMMTkwLjYgMjEwUTE1MCAyMTYgMTA5LjYgMjEwWiIgZmlsbD0iIzE2MWYzMCIgZmlsbC1vcGFjaXR5PSIuNSIvPjxwYXRoIGQ9Ik0xNTAgMjEyVjI0NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTYxZjMwIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLW9wYWNpdHk9IjAuNyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTExOCAyMTRRMTI2IDIyOCAxNDAgMjIyIiBmaWxsPSJub25lIiBzdHJva2U9IiMxNjFmMzAiIHN0cm9rZS13aWR0aD0iMSIgc3Ryb2tlLW9wYWNpdHk9IjAuNyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9nPjwvc3ZnPg==" alt=""><div><b>Yüksek Bel Pantolon</b><small>Kadın · Pantolon · 899 ₺</small><div class="tags"><span>lacivert</span><span>yün karışım</span></div></div></div>
+            <div class="cta">Mankene giydir</div>
+          </div>
+        </div></div>
+        <div class="phone" data-i="2"><div class="scr">
+          <div class="scr__bar"><span>09:43</span><i></i><span>5G</span></div>
+          <div class="scr__h"><b>Görseller</b><small>SATEN MİDİ ELBİSE</small></div>
+          <div class="scr__b">
+            <div class="gen">
+              <div class="sel"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDAwIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjgwMCI+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJiZyIgY3g9Ii41IiBjeT0iLjM1IiByPSIuOCI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjRjFFQ0U2Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRDlDRkM1Ii8+PC9yYWRpYWxHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9InNraW4iIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIwIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNEOUM5QjkiLz48c3RvcCBvZmZzZXQ9Ii41IiBzdG9wLWNvbG9yPSIjRUVFM0Q3Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjQ0RCQkE5Ii8+PC9saW5lYXJHcmFkaWVudD48ZmlsdGVyIGlkPSJzaCIgeD0iLTIwJSIgeT0iLTIwJSIgd2lkdGg9IjE0MCUiIGhlaWdodD0iMTQwJSI+PGZlRHJvcFNoYWRvdyBkeD0iMCIgZHk9IjIiIHN0ZERldmlhdGlvbj0iMiIgZmxvb2Qtb3BhY2l0eT0iMC4xOCIvPjwvZmlsdGVyPjxsaW5lYXJHcmFkaWVudCBpZD0ibXMiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMC40MTUwMDAwMDAwMDAwMDAwNCIvPjxzdG9wIG9mZnNldD0iLjQ1IiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9IjAiLz48c3RvcCBvZmZzZXQ9Ii42MiIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIwLjE5OCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAwMCIgc3RvcC1vcGFjaXR5PSIwLjI3Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSI0MDAiIGZpbGw9InVybCgjYmcpIi8+PGVsbGlwc2UgY3g9IjE1MCIgY3k9IjM5NCIgcng9IjcwIiByeT0iNyIgZmlsbD0iIzAwMCIgZmlsbC1vcGFjaXR5PSIuMTIiLz48Zz4KPGcgZmlsbD0idXJsKCNza2luKSI+CiAgPGVsbGlwc2UgY3g9IjE1MCIgY3k9IjU0IiByeD0iMjMiIHJ5PSIyOCIvPgogIDxwYXRoIGQ9Ik0xNDEgNzZIMTU5TDE2MSAxMDRIMTM5WiIvPgogIDxwYXRoIGQ9Ik0xMDAgMTA4UTE1MCA5NiAyMDAgMTA4UTIwNyAxNjAgMTkwIDIwNVEyMDAgMjMwIDE5OCAyNTJMMTAyIDI1MlExMDAgMjMwIDExMCAyMDVROTMgMTYwIDEwMCAxMDhaIi8+CiAgPGVsbGlwc2UgY3g9IjEwMSIgY3k9IjExNSIgcng9IjExIiByeT0iOSIvPjxlbGxpcHNlIGN4PSIxOTkiIGN5PSIxMTUiIHJ4PSIxMSIgcnk9IjkiLz4KICA8cGF0aCBkPSJNMTA0IDI0OEwxNDggMjQ4TDE0MiAzOTJMMTE4IDM5MloiLz48cGF0aCBkPSJNMTUyIDI0OEwxOTYgMjQ4TDE4MiAzOTJMMTU4IDM5MloiLz4KPC9nPjxnIGZpbHRlcj0idXJsKCNzaCkiPjxwYXRoIGQ9Ik0xMTQgMTA2TDEzMiAxMDRRMTUwIDExOCAxNjggMTA0TDE4NiAxMDZMMTkyIDE1MFExODYgMTkwIDE5MCAyMDVMMjM0IDMzNFExNTAgMzQ4IDY2IDMzNEwxMTAgMjA1UTExNCAxOTAgMTA4IDE1MFoiIGZpbGw9IiNCMzI2M0UiLz48cGF0aCBkPSJNMTE0IDEwNkwxMzIgMTA0UTE1MCAxMTggMTY4IDEwNEwxODYgMTA2TDE5MiAxNTBRMTg2IDE5MCAxOTAgMjA1TDIzNCAzMzRRMTUwIDM0OCA2NiAzMzRMMTEwIDIwNVExMTQgMTkwIDEwOCAxNTBaIiBmaWxsPSJ1cmwoI21zKSIvPjxwYXRoIGQ9Ik0xMTAgMjA1UTE1MCAyMTQgMTkwIDIwNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNzQxOTI4IiBzdHJva2Utd2lkdGg9IjEuNCIgc3Ryb2tlLW9wYWNpdHk9IjAuNyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9nPjwvZz48L3N2Zz4=" alt=""></div>
+              <div class="sel"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDAwIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjgwMCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJiZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI0Y3RjVGMiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0VDRThFMyIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJza2luIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMCI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjRDlDOUI5Ii8+PHN0b3Agb2Zmc2V0PSIuNSIgc3RvcC1jb2xvcj0iI0VFRTNENyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0NEQkJBOSIvPjwvbGluZWFyR3JhZGllbnQ+PGZpbHRlciBpZD0ic2giIHg9Ii0yMCUiIHk9Ii0yMCUiIHdpZHRoPSIxNDAlIiBoZWlnaHQ9IjE0MCUiPjxmZURyb3BTaGFkb3cgZHg9IjAiIGR5PSI2IiBzdGREZXZpYXRpb249IjYiIGZsb29kLW9wYWNpdHk9IjAuMjIiLz48L2ZpbHRlcj48bGluZWFyR3JhZGllbnQgaWQ9Im1zIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9IjAuNDE1MDAwMDAwMDAwMDAwMDQiLz48c3RvcCBvZmZzZXQ9Ii40NSIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIwIi8+PHN0b3Agb2Zmc2V0PSIuNjIiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMC4xOTgiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwMDAiIHN0b3Atb3BhY2l0eT0iMC4yNyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iNDAwIiBmaWxsPSJ1cmwoI2JnKSIvPjxnIGZpbHRlcj0idXJsKCNzaCkiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE1MCAyMDApIHNjYWxlKDEuMSkgdHJhbnNsYXRlKC0xNTAgLTIyNikiPjxwYXRoIGQ9Ik0xMTQgMTA2TDEzMiAxMDRRMTUwIDExOCAxNjggMTA0TDE4NiAxMDZMMTkyIDE1MFExODYgMTkwIDE5MCAyMDVMMjM0IDMzNFExNTAgMzQ4IDY2IDMzNEwxMTAgMjA1UTExNCAxOTAgMTA4IDE1MFoiIGZpbGw9IiNCMzI2M0UiLz48cGF0aCBkPSJNMTE0IDEwNkwxMzIgMTA0UTE1MCAxMTggMTY4IDEwNEwxODYgMTA2TDE5MiAxNTBRMTg2IDE5MCAxOTAgMjA1TDIzNCAzMzRRMTUwIDM0OCA2NiAzMzRMMTEwIDIwNVExMTQgMTkwIDEwOCAxNTBaIiBmaWxsPSJ1cmwoI21zKSIvPjxwYXRoIGQ9Ik0xMTAgMjA1UTE1MCAyMTQgMTkwIDIwNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNzQxOTI4IiBzdHJva2Utd2lkdGg9IjEuNCIgc3Ryb2tlLW9wYWNpdHk9IjAuNyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9nPjwvc3ZnPg==" alt=""></div>
+              <div class="sel"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDAwIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjgwMCI+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJiZyIgY3g9Ii41IiBjeT0iLjM1IiByPSIuOCI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjRjFFQ0U2Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRDlDRkM1Ii8+PC9yYWRpYWxHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9InNraW4iIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIwIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNEOUM5QjkiLz48c3RvcCBvZmZzZXQ9Ii41IiBzdG9wLWNvbG9yPSIjRUVFM0Q3Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjQ0RCQkE5Ii8+PC9saW5lYXJHcmFkaWVudD48ZmlsdGVyIGlkPSJzaCIgeD0iLTIwJSIgeT0iLTIwJSIgd2lkdGg9IjE0MCUiIGhlaWdodD0iMTQwJSI+PGZlRHJvcFNoYWRvdyBkeD0iMCIgZHk9IjIiIHN0ZERldmlhdGlvbj0iMiIgZmxvb2Qtb3BhY2l0eT0iMC4xOCIvPjwvZmlsdGVyPjxsaW5lYXJHcmFkaWVudCBpZD0ibXMiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMC40MTUwMDAwMDAwMDAwMDAwNCIvPjxzdG9wIG9mZnNldD0iLjQ1IiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9IjAiLz48c3RvcCBvZmZzZXQ9Ii42MiIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIwLjE5OCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAwMCIgc3RvcC1vcGFjaXR5PSIwLjI3Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSI0MDAiIGZpbGw9InVybCgjYmcpIi8+PGVsbGlwc2UgY3g9IjE1MCIgY3k9IjM5NCIgcng9IjcwIiByeT0iNyIgZmlsbD0iIzAwMCIgZmlsbC1vcGFjaXR5PSIuMTIiLz48Zz4KPGcgZmlsbD0idXJsKCNza2luKSI+CiAgPGVsbGlwc2UgY3g9IjE1MCIgY3k9IjU0IiByeD0iMjMiIHJ5PSIyOCIvPgogIDxwYXRoIGQ9Ik0xNDEgNzZIMTU5TDE2MSAxMDRIMTM5WiIvPgogIDxwYXRoIGQ9Ik0xMDAgMTA4UTE1MCA5NiAyMDAgMTA4UTIwNyAxNjAgMTkwIDIwNVEyMDAgMjMwIDE5OCAyNTJMMTAyIDI1MlExMDAgMjMwIDExMCAyMDVROTMgMTYwIDEwMCAxMDhaIi8+CiAgPGVsbGlwc2UgY3g9IjEwMSIgY3k9IjExNSIgcng9IjExIiByeT0iOSIvPjxlbGxpcHNlIGN4PSIxOTkiIGN5PSIxMTUiIHJ4PSIxMSIgcnk9IjkiLz4KICA8cGF0aCBkPSJNMTA0IDI0OEwxNDggMjQ4TDE0MiAzOTJMMTE4IDM5MloiLz48cGF0aCBkPSJNMTUyIDI0OEwxOTYgMjQ4TDE4MiAzOTJMMTU4IDM5MloiLz4KPC9nPjxnIGZpbHRlcj0idXJsKCNzaCkiPjxwYXRoIGQ9Ik0xMTQgMTA2TDEzMiAxMDRRMTUwIDExOCAxNjggMTA0TDE4NiAxMDZMMTkyIDE1MFExODYgMTkwIDE5MCAyMDVMMjM0IDMzNFExNTAgMzQ4IDY2IDMzNEwxMTAgMjA1UTExNCAxOTAgMTA4IDE1MFoiIGZpbGw9IiNCMzI2M0UiLz48cGF0aCBkPSJNMTE0IDEwNkwxMzIgMTA0UTE1MCAxMTggMTY4IDEwNEwxODYgMTA2TDE5MiAxNTBRMTg2IDE5MCAxOTAgMjA1TDIzNCAzMzRRMTUwIDM0OCA2NiAzMzRMMTEwIDIwNVExMTQgMTkwIDEwOCAxNTBaIiBmaWxsPSJ1cmwoI21zKSIvPjxwYXRoIGQ9Ik0xMTAgMjA1UTE1MCAyMTQgMTkwIDIwNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNzQxOTI4IiBzdHJva2Utd2lkdGg9IjEuNCIgc3Ryb2tlLW9wYWNpdHk9IjAuNyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9nPjwvZz48L3N2Zz4=" alt="" style="transform:scaleX(-1)"></div>
+              <div class="re">↻<br>Yeniden üret</div>
+            </div>
+            <div class="cta">Seçilenlerle devam</div>
+          </div>
+        </div></div>
+        <div class="phone" data-i="3"><div class="scr">
+          <div class="scr__bar"><span>09:44</span><i></i><span>5G</span></div>
+          <div class="scr__h"><b>Yayınla</b><small>1.290 ₺</small></div>
+          <div class="scr__b">
+            <div class="sizes"><span><b>4</b>XS</span><span><b>8</b>S</span><span><b>10</b>M</span><span><b>6</b>L</span><span><b>2</b>XL</span></div>
+            <div class="ch"><div>Kumash sitesi<small>hemen yayında</small></div><i class="tg"></i></div>
+            <div class="ch"><div>Trendyol<small>Trendyol onayına gider</small></div><i class="tg"></i></div>
+            <div class="ch"><div>Instagram<small>kombin karuseli · 18:00</small></div><i class="tg"></i></div>
+            <div class="ch"><div>Facebook<small>sayfa gönderisi + mağaza kataloğu</small></div><i class="tg"></i></div>
+            <div class="cta cta--accent">Her yerde yayınla</div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="steps" id="steps">
+        <article class="step on" data-i="0">
+          <div class="step__n"><span class="label">Ekran 1 / 4</span><span class="label">~5 sn</span></div>
+          <h3>Çek</h3>
+          <p>Ürünler düz zemine yan yana dizilir. Kamera parçaları canlı işaretler, ışık ya da netlik yetersizse uyarır.</p>
+          <ul><li>Grup fotoğrafından sonra her parçanın yakın planı istenir</li><li>Zayıf bağlantıda çekim kuyruğa alınır, sonra gönderilir</li></ul>
+        </article>
+        <article class="step" data-i="1">
+          <div class="step__n"><span class="label">Ekran 2 / 4</span><span class="label">~20 sn</span></div>
+          <h3>Kontrol et</h3>
+          <p>Claude her parçanın türünü, rengini, kumaşını ve desenini çıkarır, başlık ve açıklamayı yazar, fiyat önerir.</p>
+          <ul><li>Yanlış alan tek dokunuşla düzeltilir</li><li>Arka plan silinir, kesik ürün görseli hazırlanır</li></ul>
+        </article>
+        <article class="step" data-i="2">
+          <div class="step__n"><span class="label">Ekran 3 / 4</span><span class="label">~30–60 sn</span></div>
+          <h3>Giydir</h3>
+          <p>Her parça fotoğraf kalitesinde mankene giydirilir: ön, arka ve kombin görseli. Beğenilmeyen görsel yeniden üretilir.</p>
+          <ul><li>Renk ve detay gerçek ürünle karşılaştırılır</li><li>Onaysız hiçbir görsel yayına çıkmaz</li></ul>
+        </article>
+        <article class="step" data-i="3">
+          <div class="step__n"><span class="label">Ekran 4 / 4</span><span class="label">arka planda</span></div>
+          <h3>Yayınla</h3>
+          <p>Beden stoğu girilir, kanallar seçilir. Site anında, Trendyol kendi onayından sonra, Instagram ve Facebook planlanan saatte yayına girer.</p>
+          <ul><li>Hata olursa uygulamada görünür ve tekrar denenir</li><li>Sipariş gelince telefona bildirim</li></ul>
+        </article>
+      </div>
+    </div>
+
+    <div class="pipe">
+      <div class="pipe__head"><span class="label">Arka planda · tek ürün</span><span class="label">toplam ~2 dk + onay</span></div>
+      <div class="pipe__row"><span class="n">1</span><b>Çekim yüklenir</b><p>Telefonda sıkıştırılır, doğrudan bulut depoya gider.</p><span class="t">~5 sn</span><span class="bar"><i style="left:0;width:4%"></i></span></div>
+      <div class="pipe__row"><span class="n">2</span><b>Parçalar tanınır</b><p>Claude yer, tür, özellik ve Türkçe metni çıkarır.</p><span class="t">~20 sn</span><span class="bar"><i style="left:4%;width:17%"></i></span></div>
+      <div class="pipe__row"><span class="n">3</span><b>Arka plan temizlenir</b><p>Kesik görsel hem giydirmede hem Kabin'de kullanılır.</p><span class="t">~5 sn</span><span class="bar"><i style="left:21%;width:4%"></i></span></div>
+      <div class="pipe__row"><span class="n">4</span><b>Mankene giydirilir</b><p>Parça başına 3-4 görsel, paralel üretilir.</p><span class="t">~30–60 sn</span><span class="bar"><i style="left:25%;width:50%"></i></span></div>
+      <div class="pipe__row"><span class="n">5</span><b>Personel onaylar</b><p>Renk ve detay kontrolü, fiyat ve stok.</p><span class="t">insan</span><span class="bar"><i style="left:75%;width:15%;opacity:.4"></i></span></div>
+      <div class="pipe__row"><span class="n">6</span><b>Kanallara dağıtılır</b><p>Site, Trendyol V2, Instagram ve Facebook işleri kuyruğa girer.</p><span class="t">arka planda</span><span class="bar"><i style="left:90%;width:10%"></i></span></div>
+    </div>
+    <div class="seam"></div>
+  </section>
+
+  <section class="sec wrap" id="kabin">
+    <div class="head">
+      <div class="head__idx"><b>03</b><span class="label">Kabin</span></div>
+      <div class="head__body">
+        <h2>Beğendiğin ürün, <span class="it">üzerinde.</span></h2>
+        <p>Ürün sayfasındaki tek düğme. Müşteri kendine yakın hazır bir modeli seçer ya da boy fotoğrafını yükler; birkaç saniye içinde ürünü üzerinde görür ve oradan sepete ekler.</p>
+      </div>
+    </div>
+    <div class="kabin">
+      <div class="shop">
+        <div class="shop__bar"><b>Kumash</b><span>kumash.com.tr/urun/saten-midi-elbise-bordo</span></div>
+        <div class="pdp">
+          <div class="compare" id="compare">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDAwIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjgwMCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJiZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI0Y3RjVGMiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0VDRThFMyIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJza2luIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMCI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjRDlDOUI5Ii8+PHN0b3Agb2Zmc2V0PSIuNSIgc3RvcC1jb2xvcj0iI0VFRTNENyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0NEQkJBOSIvPjwvbGluZWFyR3JhZGllbnQ+PGZpbHRlciBpZD0ic2giIHg9Ii0yMCUiIHk9Ii0yMCUiIHdpZHRoPSIxNDAlIiBoZWlnaHQ9IjE0MCUiPjxmZURyb3BTaGFkb3cgZHg9IjAiIGR5PSI2IiBzdGREZXZpYXRpb249IjYiIGZsb29kLW9wYWNpdHk9IjAuMjIiLz48L2ZpbHRlcj48bGluZWFyR3JhZGllbnQgaWQ9Im1zIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9IjAuNDE1MDAwMDAwMDAwMDAwMDQiLz48c3RvcCBvZmZzZXQ9Ii40NSIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIwIi8+PHN0b3Agb2Zmc2V0PSIuNjIiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMC4xOTgiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwMDAiIHN0b3Atb3BhY2l0eT0iMC4yNyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iNDAwIiBmaWxsPSJ1cmwoI2JnKSIvPjxnIGZpbHRlcj0idXJsKCNzaCkiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE1MCAyMDApIHNjYWxlKDEuMSkgdHJhbnNsYXRlKC0xNTAgLTIyNikiPjxwYXRoIGQ9Ik0xMTQgMTA2TDEzMiAxMDRRMTUwIDExOCAxNjggMTA0TDE4NiAxMDZMMTkyIDE1MFExODYgMTkwIDE5MCAyMDVMMjM0IDMzNFExNTAgMzQ4IDY2IDMzNEwxMTAgMjA1UTExNCAxOTAgMTA4IDE1MFoiIGZpbGw9IiNCMzI2M0UiLz48cGF0aCBkPSJNMTE0IDEwNkwxMzIgMTA0UTE1MCAxMTggMTY4IDEwNEwxODYgMTA2TDE5MiAxNTBRMTg2IDE5MCAxOTAgMjA1TDIzNCAzMzRRMTUwIDM0OCA2NiAzMzRMMTEwIDIwNVExMTQgMTkwIDEwOCAxNTBaIiBmaWxsPSJ1cmwoI21zKSIvPjxwYXRoIGQ9Ik0xMTAgMjA1UTE1MCAyMTQgMTkwIDIwNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNzQxOTI4IiBzdHJva2Utd2lkdGg9IjEuNCIgc3Ryb2tlLW9wYWNpdHk9IjAuNyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9nPjwvc3ZnPg==" alt="Kesik ürün görseli">
+            <img class="on" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgNDAwIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjgwMCI+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJiZyIgY3g9Ii41IiBjeT0iLjM1IiByPSIuOCI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjRjFFQ0U2Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRDlDRkM1Ii8+PC9yYWRpYWxHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9InNraW4iIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIwIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNEOUM5QjkiLz48c3RvcCBvZmZzZXQ9Ii41IiBzdG9wLWNvbG9yPSIjRUVFM0Q3Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjQ0RCQkE5Ii8+PC9saW5lYXJHcmFkaWVudD48ZmlsdGVyIGlkPSJzaCIgeD0iLTIwJSIgeT0iLTIwJSIgd2lkdGg9IjE0MCUiIGhlaWdodD0iMTQwJSI+PGZlRHJvcFNoYWRvdyBkeD0iMCIgZHk9IjIiIHN0ZERldmlhdGlvbj0iMiIgZmxvb2Qtb3BhY2l0eT0iMC4xOCIvPjwvZmlsdGVyPjxsaW5lYXJHcmFkaWVudCBpZD0ibXMiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMC40MTUwMDAwMDAwMDAwMDAwNCIvPjxzdG9wIG9mZnNldD0iLjQ1IiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9IjAiLz48c3RvcCBvZmZzZXQ9Ii42MiIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIwLjE5OCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAwMCIgc3RvcC1vcGFjaXR5PSIwLjI3Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSI0MDAiIGZpbGw9InVybCgjYmcpIi8+PGVsbGlwc2UgY3g9IjE1MCIgY3k9IjM5NCIgcng9IjcwIiByeT0iNyIgZmlsbD0iIzAwMCIgZmlsbC1vcGFjaXR5PSIuMTIiLz48Zz4KPGcgZmlsbD0idXJsKCNza2luKSI+CiAgPGVsbGlwc2UgY3g9IjE1MCIgY3k9IjU0IiByeD0iMjMiIHJ5PSIyOCIvPgogIDxwYXRoIGQ9Ik0xNDEgNzZIMTU5TDE2MSAxMDRIMTM5WiIvPgogIDxwYXRoIGQ9Ik0xMDAgMTA4UTE1MCA5NiAyMDAgMTA4UTIwNyAxNjAgMTkwIDIwNVEyMDAgMjMwIDE5OCAyNTJMMTAyIDI1MlExMDAgMjMwIDExMCAyMDVROTMgMTYwIDEwMCAxMDhaIi8+CiAgPGVsbGlwc2UgY3g9IjEwMSIgY3k9IjExNSIgcng9IjExIiByeT0iOSIvPjxlbGxpcHNlIGN4PSIxOTkiIGN5PSIxMTUiIHJ4PSIxMSIgcnk9IjkiLz4KICA8cGF0aCBkPSJNMTA0IDI0OEwxNDggMjQ4TDE0MiAzOTJMMTE4IDM5MloiLz48cGF0aCBkPSJNMTUyIDI0OEwxOTYgMjQ4TDE4MiAzOTJMMTU4IDM5MloiLz4KPC9nPjxnIGZpbHRlcj0idXJsKCNzaCkiPjxwYXRoIGQ9Ik0xMTQgMTA2TDEzMiAxMDRRMTUwIDExOCAxNjggMTA0TDE4NiAxMDZMMTkyIDE1MFExODYgMTkwIDE5MCAyMDVMMjM0IDMzNFExNTAgMzQ4IDY2IDMzNEwxMTAgMjA1UTExNCAxOTAgMTA4IDE1MFoiIGZpbGw9IiNCMzI2M0UiLz48cGF0aCBkPSJNMTE0IDEwNkwxMzIgMTA0UTE1MCAxMTggMTY4IDEwNEwxODYgMTA2TDE5MiAxNTBRMTg2IDE5MCAxOTAgMjA1TDIzNCAzMzRRMTUwIDM0OCA2NiAzMzRMMTEwIDIwNVExMTQgMTkwIDEwOCAxNTBaIiBmaWxsPSJ1cmwoI21zKSIvPjxwYXRoIGQ9Ik0xMTAgMjA1UTE1MCAyMTQgMTkwIDIwNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNzQxOTI4IiBzdHJva2Utd2lkdGg9IjEuNCIgc3Ryb2tlLW9wYWNpdHk9IjAuNyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9nPjwvZz48L3N2Zz4=" alt="Ürün model üzerinde">
+            <span class="compare__tag" style="left:10px">ürün</span>
+            <span class="compare__tag" style="right:10px">üzerinde</span>
+            <span class="compare__line"></span><span class="compare__knob">↔</span>
+            <input type="range" id="cmp" min="0" max="100" value="50" aria-label="Ürün ile deneme sonucunu karşılaştır">
+          </div>
+          <div class="pdp__info">
+            <span class="pdp__meta">Kadın · Elbise · KMS-00143</span>
+            <h4>Saten Midi Elbise</h4>
+            <span class="pdp__price">1.290 ₺</span>
+            <div class="sz"><span>XS</span><span>S</span><span class="on">M</span><span>L</span><span>XL</span></div>
+            <span class="try-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 4a2 2 0 1 1 2 2c-1 0-2 .7-2 1.6V9l9 7.5c.6.5.3 1.5-.5 1.5h-17c-.8 0-1.1-1-.5-1.5L12 9"/></svg>Üzerinde dene</span>
+            <span class="buy">Sepete ekle</span>
+            <span class="pdp__meta">Sonuç temsilîdir · gerçek fotoğraf galeride</span>
+          </div>
+        </div>
+        <div class="modes">
+          <div class="mode"><b>Hazır model</b>Boyuna ve bedenine yakın olanı seç.
+            <div class="bodies" aria-hidden="true">
+              <svg viewBox="0 0 20 46" fill="currentColor"><circle cx="10" cy="4" r="3.4"/><path d="M5 10h10l2 15h-3l-1 21h-2.5l-.5-14-.5 14H7L6 25H3z"/></svg>
+              <svg viewBox="0 0 20 46" fill="currentColor" class="on"><circle cx="10" cy="4" r="3.4"/><path d="M4.5 10h11l2.2 15h-3.2l-1 21h-2.8l-.7-14-.7 14H6.5L5.5 25H2.3z"/></svg>
+              <svg viewBox="0 0 20 46" fill="currentColor"><circle cx="10" cy="4" r="3.4"/><path d="M4 10h12l2.6 15h-3.6l-1 21h-3l-1-14-1 14H6L5 25H1.4z"/></svg>
+              <svg viewBox="0 0 20 46" fill="currentColor"><circle cx="10" cy="4" r="3.4"/><path d="M3.4 10h13.2l3 15h-4l-1 21h-3.2l-1.4-14-1.4 14H5.6l-1-21h-4z"/></svg>
+              <svg viewBox="0 0 20 46" fill="currentColor"><circle cx="10" cy="4" r="3.4"/><path d="M5.5 10h9l1.6 15h-2.6l-.8 21h-2.2l-.5-14-.5 14H7.5l-.8-21H4z"/></svg>
+              <svg viewBox="0 0 20 46" fill="currentColor"><circle cx="10" cy="4" r="3.4"/><path d="M3 10h14l3.2 15h-4.2l-1 21h-3.4L10 32l-1.6 14H5l-1-21H-.2z"/></svg>
+            </div>
+          </div>
+          <div class="mode"><b>Kendi fotoğrafın</b>Boy fotoğrafı, düz ışık. 24 saatte silinir.
+            <div class="bodies" aria-hidden="true" style="align-items:center;justify-content:center;height:46px;border:1.5px dashed #D9D4CE;border-radius:8px;font-size:18px;color:#B9B3AD">＋</div>
+          </div>
+        </div>
+        <div class="consent"><i></i><span>Fotoğrafımın yalnızca bu deneme için işlenmesine ve 24 saat içinde silinmesine onay veriyorum. Fotoğrafım yapay zekâ eğitiminde kullanılmaz.</span></div>
+      </div>
+
+      <div class="notes">
+        <div class="note"><b>İki giriş</b><p>Fotoğraf yüklemek istemeyen müşteri için 6 hazır model. Bu yol kişisel veri riskini sıfırlar; ilk sürüm tek başına bununla açılabilir.</p></div>
+        <div class="note"><b>Kombin</b><p>Önce üst giyim, sonra çıkan sonucun üstüne alt giyim. "Kombini tamamla" ile birleşince sepet tutarı büyür.</p></div>
+        <div class="note"><b>Hız</b><p>Servis 5–17 sn içinde dönüyor. Aynı model ve ürün için sonuç önbellekten gelir, anında açılır.</p></div>
+        <div class="note"><b>Kota</b><p>Misafir günde 3, üye 15 deneme. Günlük bütçe aşılırsa Kabin yalnız hazır modellerle çalışır.</p></div>
+        <div class="note"><b>Dürüstlük</b><p>Sonuç "temsilîdir" etiketiyle gösterilir, beden önerisi yapmaz. Gerçek düz çekim fotoğraf her zaman galeride.</p></div>
+        <div class="note"><b>Ölçüm</b><p>Deneyen ve denemeyen müşterilerin sepete ekleme ve iade oranı karşılaştırılır; kota buna göre ayarlanır.</p></div>
+      </div>
+    </div>
+    <div class="seam"></div>
+  </section>
+
+  <section class="sec wrap" id="mimari">
+    <div class="head">
+      <div class="head__idx"><b>04</b><span class="label">Mimari</span></div>
+      <div class="head__body">
+        <h2>Her şey <span class="it">aynı kuyruktan</span> geçer.</h2>
+        <p>Mobil uygulama ve site aynı API'ye bağlanır. Ağır işler (tanıma, giydirme, yayın) kuyrukta çalışır; servis değişirse yalnızca bir sağlayıcı dosyası değişir.</p>
+      </div>
+    </div>
+    <div class="arch">
+      <div class="arch__col arch__col--l">
+        <span class="label">Giriş</span>
+        <div class="node"><b>Atölye uygulaması</b><span>React Native + Expo, iOS ve Android tek kod</span><span class="mono">EAS Build · EAS Update · Expo Push</span><i class="pulse"></i></div>
+        <div class="node"><b>Kumash sitesi ve Kabin</b><span>Next.js mağaza</span><span class="mono">mevcut</span><i class="pulse"></i></div>
+      </div>
+      <div class="core">
+        <span class="label">Çekirdek · Railway</span>
+        <h3>Kumash API ve iş kuyruğu</h3>
+        <ul>
+          <li><span class="st st--ok">hazır</span>Postgres, ürün ve sipariş modeli</li>
+          <li><span class="st st--ok">hazır</span>process_shoot · publish_product · sync_stock</li>
+          <li><span class="st st--new">yeni</span>/api/app: token girişi, çekim, onay, sipariş</li>
+          <li><span class="st st--new">yeni</span>render_model · try_on · publish_trendyol · publish_instagram</li>
+          <li><span class="st st--new">yeni</span>Kota, önbellek, 24 saatlik silme işi</li>
+        </ul>
+      </div>
+      <div class="arch__col arch__col--r">
+        <span class="label">Servisler</span>
+        <div class="node"><b>Claude</b><span>Parça tanıma, özellik, Türkçe metin</span><span class="mono">claude-opus-5-5 · entegre</span><i class="pulse"></i></div>
+        <div class="node"><b>Görsel servisi</b><span>Mankene giydirme ve Kabin denemesi</span><span class="mono">FASHN · yedek Gemini</span><i class="pulse"></i></div>
+        <div class="node"><b>Cloudflare R2</b><span>Ham, kesik ve üretilen görseller</span><i class="pulse"></i></div>
+        <div class="node"><b>Trendyol · Instagram · Facebook</b><span>Ürün, gönderi ve Meta kataloğu</span><i class="pulse"></i></div>
+      </div>
+    </div>
+    <div class="seam"></div>
+  </section>
+
+  <section class="sec wrap" id="servisler">
+    <div class="head">
+      <div class="head__idx"><b>05</b><span class="label">Servisler</span></div>
+      <div class="head__body">
+        <h2>Claude tanır, <span class="it">görsel servisi giydirir.</span></h2>
+        <p>Claude görsel üretmiyor; tanıma ve metin için kalıyor. Giydirme ve deneme için ayrı bir servis gerekiyor. İlk hafta aynı 20 ürünle kıyaslayıp karar veriyoruz.</p>
+      </div>
+    </div>
+    <div class="svc">
+      <div class="svc__row"><h3>Claude Opus 5.5</h3><p>Parçaları ayırma, özellik çıkarma, ürün metni, fiyat önerisi</p><span class="mono"><span class="svc__k">süre </span>~20 sn / çekim</span><span class="mono"><span class="svc__k">fiyat </span>~$0,03 / ürün</span><span class="role role--main">entegre</span></div>
+      <div class="svc__row"><h3>FASHN Product to Model</h3><p>Düz çekimden manken ya da model görseli (Atölye)</p><span class="mono"><span class="svc__k">süre </span>~10–20 sn</span><span class="mono"><span class="svc__k">fiyat </span>$0,075+</span><span class="role role--main">ana aday</span></div>
+      <div class="svc__row"><h3>FASHN Try-On v1.6</h3><p>Model ya da müşteri fotoğrafına giydirme (Kabin); üst, alt, tek parça</p><span class="mono"><span class="svc__k">süre </span>5 / 8 / 12–17 sn</span><span class="mono"><span class="svc__k">fiyat </span>$0,075</span><span class="role role--main">ana aday</span></div>
+      <div class="svc__row"><h3>Gemini 2.5 Flash Image</h3><p>İstemle görsel düzenleme</p><span class="mono"><span class="svc__k">süre </span>~10 sn</span><span class="mono"><span class="svc__k">fiyat </span>~$0,04</span><span class="role">yedek</span></div>
+      <div class="svc__row"><h3>Photta · Nightjar</h3><p>Ghost mannequin ve model görseli, aylık paket</p><span class="mono"><span class="svc__k">süre </span>—</span><span class="mono"><span class="svc__k">fiyat </span>$0,06–0,17</span><span class="role">kıyas</span></div>
+      <div class="svc__row"><h3>Vertex AI Try-On</h3><p>Kişi + kıyafet giydirme</p><span class="mono"><span class="svc__k">süre </span>—</span><span class="mono"><span class="svc__k">fiyat </span>~$0,06</span><span class="role role--off">kaldırılıyor</span></div>
+    </div>
+    <p class="fine">Fiyat ve süreler satıcı belgelerinden ve üçüncü taraf karşılaştırmalardan; sözleşmeden önce her satıcının kendi sayfasından doğrulanmalı. FASHN süreleri performans, dengeli ve kalite modlarına göre.</p>
+    <div class="seam"></div>
+  </section>
+
+  <section class="sec wrap" id="gizlilik">
+    <div class="head">
+      <div class="head__idx"><b>06</b><span class="label">Gizlilik</span></div>
+      <div class="head__body">
+        <h2>Müşterinin fotoğrafı <span class="it">emanettir.</span></h2>
+        <p>KVKK, yapay zekâ uygulamalarına yüklenen yüz fotoğraflarının biyometrik veri işlemeye yol açabileceği konusunda uyarıyor. Kabin bu yüzden en az veriyle ve açık rızayla tasarlanıyor; fotoğraf yükleme, bir hukukçu aydınlatma metnine bakmadan açılmaz.</p>
+      </div>
+    </div>
+    <div class="labels">
+      <div class="woven"><span class="care"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg></span><b>Açık rıza, her seferinde</b><p>Yüklemeden önce kısa aydınlatma metni ve işaretlenmemiş onay kutusu. Rıza kaydı tarih ve sürümüyle saklanır.</p></div>
+      <div class="woven"><span class="care"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg></span><b>24 saatte silinir</b><p>Fotoğraf ve sonuç 24 saat sonra otomatik silinir. "Fotoğrafımı şimdi sil" düğmesi de var.</p></div>
+      <div class="woven"><span class="care"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="10" r="4"/><path d="M5 20c1.5-3 4-4.5 7-4.5s5.5 1.5 7 4.5M4 4l16 16"/></svg></span><b>Yüz şablonu yok</b><p>Kimlik tanıma, yüz eşleştirme, profil çıkarma yapılmaz. Fotoğraf yalnız o deneme için servise gider.</p></div>
+      <div class="woven"><span class="care"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 5l16 14"/></svg></span><b>Eğitimde kullanılmaz</b><p>Görsel servisiyle veri işleme sözleşmesi; müşteri verisinin model eğitimine girmeyeceği yazılı olur.</p></div>
+      <div class="woven"><span class="care"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/></svg></span><b>İçerik denetimi</b><p>Çocuk, çıplaklık ve başkasının fotoğrafına karşı otomatik kontrol; uygunsuz görsel işlenmez.</p></div>
+      <div class="woven"><span class="care"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 18h16M7 18V9M12 18V5M17 18v-6"/></svg></span><b>Kota ve bütçe</b><p>Misafir 3, üye 15 deneme / gün. Günlük harcama sınırı aşılırsa yalnız hazır modeller.</p></div>
+    </div>
+    <div class="seam"></div>
+  </section>
+
+  <section class="sec wrap" id="maliyet">
+    <div class="head">
+      <div class="head__idx"><b>07</b><span class="label">Maliyet</span></div>
+      <div class="head__body">
+        <h2>Kendi rakamlarınla <span class="it">hesapla.</span></h2>
+        <p>Varsayılanlar orta ölçekli bir başlangıç. Kaydırıcıları oynat; sonuç dolar cinsinden, aylık ve tahminî.</p>
+      </div>
+    </div>
+    <div class="calc">
+      <div>
+        <div class="field"><label for="cProd">Aylık yeni ürün <output id="oProd" for="cProd">300</output></label><input type="range" id="cProd" min="50" max="2000" step="50" value="300"></div>
+        <div class="field"><label for="cImg">Ürün başına görsel <output id="oImg" for="cImg">4</output></label><input type="range" id="cImg" min="2" max="8" step="1" value="4"><small>Yeniden üretmeler dahil ortalama.</small></div>
+        <div class="field"><label for="cTry">Aylık Kabin denemesi <output id="oTry" for="cTry">5.000</output></label><input type="range" id="cTry" min="0" max="50000" step="500" value="5000"><small>Önbellekten dönen tekrarlar sayılmaz.</small></div>
+      </div>
+      <div class="receipt" aria-live="polite">
+        <span class="label">Aylık tahmin</span>
+        <div class="receipt__row"><span>Claude tanıma ve metin<small>ürün başı ~$0,03</small></span><span id="rClaude">$9</span></div>
+        <div class="receipt__row"><span>Atölye manken görselleri<small>görsel başı $0,075</small></span><span id="rGen">$90</span></div>
+        <div class="receipt__row"><span>Kabin denemeleri<small>deneme başı $0,075</small></span><span id="rTry">$375</span></div>
+        <div class="receipt__row"><span>Railway, Postgres, R2<small>sabit tahmin</small></span><span>$40</span></div>
+        <div class="receipt__row"><span>Apple Developer<small>$99 / yıl, aya bölünmüş</small></span><span>$8</span></div>
+        <div class="receipt__total"><b id="rTotal">$522</b><span>Google Play bir kerelik $25 hariç</span></div>
+        <div class="split" id="split"><i style="--c:var(--ink-2)"></i><i style="--c:var(--ink)"></i><i style="--c:var(--accent)"></i><i style="--c:var(--line-2)"></i></div>
+        <div class="split__key"><span style="--c:var(--ink-2)">Claude</span><span style="--c:var(--ink)">Atölye</span><span style="--c:var(--accent)">Kabin</span><span style="--c:var(--line-2)">altyapı</span></div>
+      </div>
+    </div>
+    <div class="seam"></div>
+  </section>
+
+  <section class="sec wrap" id="riskler">
+    <div class="head">
+      <div class="head__idx"><b>08</b><span class="label">Riskler</span></div>
+      <div class="head__body"><h2>Bilerek <span class="it">yönetilecekler.</span></h2></div>
+    </div>
+    <div class="risks">
+      <div class="risk"><div class="risk__lv"><i class="f"></i><i class="f"></i><i class="f"></i><span>yüksek</span></div><b>Tek karede 3-4 ürün kaliteyi düşürür</b><p>Kırpılan parça küçük kalır, giydirme bozulur. Atölye grup fotoğrafından sonra her parçanın yakın planını ister; ürün başına 5 saniye ekler, kaliteyi çok artırır.</p></div>
+      <div class="risk"><div class="risk__lv"><i class="f"></i><i class="f"></i><i class="f"></i><span>yüksek</span></div><b>Yapay zekâ renk ve detayı değiştirebilir</b><p>Düğme, desen, ton kayabilir; iade ve şikâyet riski. Personel onayı zorunlu, gerçek fotoğraf galeride, Kabin sonucu "temsilî" etiketli.</p></div>
+      <div class="risk"><div class="risk__lv"><i class="f"></i><i class="f"></i><i class="f"></i><span>yüksek</span></div><b>Kabin'de kişisel veri</b><p>Müşteri fotoğrafı yüz içerir. Açık rıza, 24 saatte silme, eğitim yasağı ve hukuk görüşü olmadan fotoğraf yükleme açılmaz; o zamana kadar hazır modeller.</p></div>
+      <div class="risk"><div class="risk__lv"><i class="f"></i><i class="f"></i><i></i><span>orta</span></div><b>Trendyol V2 ve kategori eşleme</b><p>V1 ürün servisleri 10 Ağustos 2026'da kapandı. V2'de marka, kategori ve özellik değerleri önceden eşlenir; ürünler Trendyol onayından geçer.</p></div>
+      <div class="risk"><div class="risk__lv"><i class="f"></i><i class="f"></i><i></i><span>orta</span></div><b>Mağaza ve Meta onay süreleri</b><p>Apple şirket hesabı D-U-N-S ister, 1-2 hafta sürebilir. Instagram ve Facebook için Meta uygulama incelemesi var. İkisi ilk gün başlatılır.</p></div>
+      <div class="risk"><div class="risk__lv"><i class="f"></i><i class="f"></i><i></i><span>orta</span></div><b>Kabin maliyeti sıçrayabilir</b><p>Viral bir gün binlerce deneme demek. Kota, önbellek ve günlük bütçe sınırı; sınır aşılınca hazır modele düşer.</p></div>
+    </div>
+    <div class="seam"></div>
+  </section>
+
+  <section class="sec wrap" id="gerekenler">
+    <div class="head">
+      <div class="head__idx"><b>09</b><span class="label">Gerekenler</span></div>
+      <div class="head__body"><h2>Başlamak için <span class="it">hesaplar.</span></h2></div>
+    </div>
+    <div class="needs">
+      <div class="need"><i></i><b>Apple Developer hesabı (şirket)</b><span class="muted">D-U-N-S numarası gerekir</span><span class="mono now">$99/yıl · hemen</span></div>
+      <div class="need"><i></i><b>Google Play Console hesabı</b><span class="muted">Kimlik doğrulaması birkaç gün</span><span class="mono">$25 bir kez</span></div>
+      <div class="need"><i></i><b>Anthropic API anahtarı</b><span class="muted">Canlıda gerçek tanıma için</span><span class="mono">kullandıkça</span></div>
+      <div class="need"><i></i><b>Görsel servisi hesabı</b><span class="muted">FASHN; kıyas için Gemini anahtarı</span><span class="mono">kullandıkça</span></div>
+      <div class="need"><i></i><b>Cloudflare hesabı (R2)</b><span class="muted">Görsel depolama</span><span class="mono">~$5/ay</span></div>
+      <div class="need"><i></i><b>Trendyol satıcı API bilgileri</b><span class="muted">Satıcı ID, API key ve secret</span><span class="mono">satıcı paneli</span></div>
+      <div class="need"><i></i><b>Instagram Business, Facebook Sayfası, Meta geliştirici</b><span class="muted">Tek Meta uygulaması; inceleme gerekiyor</span><span class="mono now">ücretsiz · hemen</span></div>
+      <div class="need"><i></i><b>KVKK aydınlatma metni, hukuk görüşü</b><span class="muted">Kabin fotoğraf yükleme için</span><span class="mono">avukat</span></div>
+      <div class="need"><i></i><b>Alan adı ve ödeme altyapısı</b><span class="muted">iyzico ya da PayTR</span><span class="mono">site satışı</span></div>
+    </div>
+    <div class="seam"></div>
+  </section>
+
+  <section class="sec wrap" id="takvim">
+    <div class="head">
+      <div class="head__idx"><b>10</b><span class="label">Takvim</span></div>
+      <div class="head__body">
+        <h2>Yaklaşık <span class="it">dokuz hafta.</span></h2>
+        <p>Atölye önce gelir; Kabin aynı kesik görselleri kullandığı için arkasından. Kesikli çubuklar dış onay beklemesi.</p>
+      </div>
+    </div>
+    <div class="gantt"><div class="gantt__grid" id="gantt"></div></div>
+    <div class="seam"></div>
+  </section>
+
+  <section class="sec wrap" id="kararlar">
+    <div class="head">
+      <div class="head__idx"><b>11</b><span class="label">Kararlar</span></div>
+      <div class="head__body"><h2>Senin vereceğin <span class="it">üç karar.</span></h2></div>
+    </div>
+    <div class="decide">
+      <div class="dq"><h3>Manken mi, model mi?</h3><p>Başsız terzi mankeni daha tutarlı ve ucuz; canlı model daha satışçı ama yüz tutarlılığı ister.</p><p class="rec"><span class="label">Önerim</span>Sitede ve Trendyol'da sabit bir yapay zekâ modeli, Instagram ve Facebook'ta kombin karuseli.</p></div>
+      <div class="dq"><h3>Kabin hangi girişle açılsın?</h3><p>Fotoğraf yükleme daha etkileyici ama hukuk ve maliyet yükü getiriyor.</p><p class="rec"><span class="label">Önerim</span>İlk sürüm yalnız 6 hazır modelle; hukuk görüşü gelince fotoğraf yükleme.</p></div>
+      <div class="dq"><h3>Hangi görsel servisi?</h3><p>Kalite, renk sadakati ve fiyat ilk hafta aynı 20 ürünle ölçülecek.</p><p class="rec"><span class="label">Önerim</span>FASHN ana, Gemini yedek; kıyas sonucuna göre kesinleşir.</p></div>
+    </div>
+  </section>
+
+  <section class="outro wrap">
+    <h2 class="display">Çek. Giydir.<br><span class="sheen">Yayınla. Dene.</span></h2>
+    <div class="src">
+      <span class="label">Kaynaklar</span>
+      <ul>
+        <li><a href="https://fashn.ai/products/api" target="_blank" rel="noopener">FASHN API</a></li>
+        <li><a href="https://docs.fashn.ai/api-reference/tryon-v1-6" target="_blank" rel="noopener">FASHN Try-On v1.6 belgeleri</a></li>
+        <li><a href="https://fal.ai/models/fal-ai/fashn/tryon/v1.6/llms.txt" target="_blank" rel="noopener">fal.ai FASHN v1.6 fiyatı</a></li>
+        <li><a href="https://nightjar.so/blog/ai-fashion-models-best-tools" target="_blank" rel="noopener">Nightjar: AI moda modeli araçları</a></li>
+        <li><a href="https://www.photta.app/blog/ghost-mannequin-photography-guide-ai" target="_blank" rel="noopener">Photta: ghost mannequin rehberi</a></li>
+        <li><a href="https://cloud.google.com/vertex-ai/generative-ai/docs/models/imagen/virtual-try-on-preview-08-04?hl=en" target="_blank" rel="noopener">Google Vertex AI Virtual Try-On</a></li>
+        <li><a href="https://blog.picassoia.com/virtual-try-on-api-pricing-clothes-glasses-and-gemini" target="_blank" rel="noopener">Picasso IA: try-on fiyatları</a></li>
+        <li><a href="https://developers.trendyol.com/tr/v3.0/docs/product-create-v2" target="_blank" rel="noopener">Trendyol Product Create v2</a></li>
+        <li><a href="https://developers.facebook.com/docs/instagram-platform/content-publishing" target="_blank" rel="noopener">Instagram Content Publishing</a></li>
+        <li><a href="https://developers.facebook.com/docs/pages-api/posts" target="_blank" rel="noopener">Facebook Pages API: gönderiler</a></li>
+        <li><a href="https://developers.facebook.com/docs/marketing-api/catalog" target="_blank" rel="noopener">Meta ürün kataloğu</a></li>
+        <li><a href="https://www.cnbce.com/yapay-zeka/kvkkdan-80ler-akimi-icin-kritik-uyari-fotografinizi-yuklemeden-once-bunu-yapin-g36967" target="_blank" rel="noopener">KVKK: fotoğraf yükleme uyarısı</a></li>
+        <li><a href="https://www.alomaliye.com/2026/06/02/mesai-takibinde-biyometrik-veri-islenmesine-yeni-ilke-karari-kvkk/amp/" target="_blank" rel="noopener">KVKK biyometrik veri ilke kararı</a></li>
+      </ul>
+    </div>
+    <div class="end"><span>Kumash · Atölye &amp; Kabin</span><span>Görseller temsilî çizimdir</span><span>24.10.2026</span></div>
+  </section>
+</main>
+
+<script>
+(() => {
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const $ = (id) => document.getElementById(id);
+
+  // Kapak: tarama ışığı düz çekimi mankene çevirir
+  const looks = [...document.querySelectorAll(".look")];
+  if (reduce) looks.forEach((l) => l.style.setProperty("--cut", "50%"));
+  else {
+    const t0 = performance.now();
+    const tick = (t) => {
+      looks.forEach((l, i) => {
+        const ph = (((t - t0) / 5200 + i * .18) % 1);
+        // 0-.45 tarar, .45-.6 bekler, .6-1 geri döner
+        const k = ph < .45 ? ph / .45 : ph < .6 ? 1 : 1 - (ph - .6) / .4;
+        const e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+        l.style.setProperty("--cut", (100 - e * 100).toFixed(2) + "%");
+      });
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  // Gezinme: aktif bölüm ve ilerleme çizgisi
+  const links = [...document.querySelectorAll("#nav a")];
+  const secs = links.map((a) => document.querySelector(a.getAttribute("href")));
+  const bar = $("bar");
+  const onScroll = () => {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    bar.style.width = (max > 0 ? scrollY / max * 100 : 0) + "%";
+    let cur = -1;
+    secs.forEach((s, i) => { if (s.getBoundingClientRect().top < innerHeight * .4) cur = i; });
+    links.forEach((a, i) => a.classList.toggle("on", i === cur));
+    if (cur >= 0) {
+      const a = links[cur], nav = $("nav");
+      const l = a.offsetLeft - nav.clientWidth / 2 + a.clientWidth / 2;
+      if (Math.abs(nav.scrollLeft - l) > 40) nav.scrollTo({ left: l, behavior: reduce ? "auto" : "smooth" });
+    }
+  };
+  addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  // Atölye: kaydırdıkça telefon ekranı değişir (geniş ekran)
+  const phones = [...document.querySelectorAll("#devices .phone")];
+  const steps = [...document.querySelectorAll("#steps .step")];
+  const wide = matchMedia("(min-width: 980px)");
+  const setStep = (i) => {
+    phones.forEach((p, j) => p.classList.toggle("on", j === i));
+    steps.forEach((s, j) => s.classList.toggle("on", j === i));
+  };
+  const io = new IntersectionObserver((es) => {
+    if (!wide.matches) return;
+    es.forEach((e) => { if (e.isIntersecting) setStep(+e.target.dataset.i); });
+  }, { rootMargin: "-45% 0px -45% 0px" });
+  steps.forEach((s) => io.observe(s));
+  const syncWide = () => { $("steps").classList.toggle("live", wide.matches); };
+  wide.addEventListener("change", syncWide); syncWide();
+
+  // Kabin: karşılaştırma sürgüsü
+  const cmp = $("cmp"), box = $("compare");
+  const setCmp = () => box.style.setProperty("--x", cmp.value + "%");
+  cmp.addEventListener("input", setCmp); setCmp();
+
+  // Takvim
+  const g = $("gantt");
+  g.insertAdjacentHTML("beforeend", "<span></span>" + Array.from({ length: 9 }, (_, i) => `<span class="wk">H${i + 1}</span>`).join(""));
+  const rows = [
+    ["Hesaplar ve onaylar", "Apple, Google, Meta, Trendyol", 1, 3, "wait", "dış onay"],
+    ["Görsel servisi kıyası", "20 ürün, 2 servis", 1, 1, "", "kıyas"],
+    ["Çekirdek API", "token, R2, giydirme işi", 2, 3, "", "arka uç"],
+    ["Atölye uygulaması", "4 ekran, bildirim", 3, 6, "", "mobil uygulama"],
+    ["Trendyol, Instagram, Facebook", "kategori eşleme, karusel, katalog", 5, 7, "", "kanallar"],
+    ["Kabin: hazır modeller", "üzerinde dene v1", 6, 7, "kabin", "kabin v1"],
+    ["Kabin: fotoğraf yükleme", "rıza, silme, kota", 8, 8, "kabin", "v2"],
+    ["Test ve mağaza yayını", "TestFlight, iç test", 8, 9, "", "yayın"],
+  ];
+  rows.forEach(([name, sub, a, b, kind, lab], i) => {
+    const r = i + 2;
+    g.insertAdjacentHTML("beforeend",
+      `<div class="g-name" style="grid-row:${r};grid-column:1">${name}<small>${sub}</small></div>` +
+      Array.from({ length: 9 }, (_, k) => `<span class="g-cell" style="grid-row:${r};grid-column:${k + 2}"></span>`).join("") +
+      `<div class="g-bar${kind ? " g-bar--" + kind : ""}" style="grid-row:${r};grid-column:${a + 1} / ${b + 2}">${lab}</div>`);
+  });
+
+  // Maliyet
+  const fmt = (n) => "$" + Math.round(n).toLocaleString("tr-TR");
+  const fill = (el) => el.style.setProperty("--p", ((el.value - el.min) / (el.max - el.min) * 100) + "%");
+  const calc = () => {
+    const p = +$("cProd").value, im = +$("cImg").value, t = +$("cTry").value;
+    ["cProd", "cImg", "cTry"].forEach((id) => fill($(id)));
+    $("oProd").textContent = p.toLocaleString("tr-TR");
+    $("oImg").textContent = im;
+    $("oTry").textContent = t.toLocaleString("tr-TR");
+    const parts = [p * .03, p * im * .075, t * .075, 48];
+    const total = parts.reduce((a, b) => a + b, 0);
+    $("rClaude").textContent = fmt(parts[0]); $("rGen").textContent = fmt(parts[1]); $("rTry").textContent = fmt(parts[2]);
+    $("rTotal").textContent = fmt(total);
+    [...$("split").children].forEach((el, i) => { el.style.width = (parts[i] / total * 100) + "%"; el.style.background = el.style.getPropertyValue("--c"); });
+  };
+  ["cProd", "cImg", "cTry"].forEach((id) => $(id).addEventListener("input", calc));
+  calc();
+})();
+</script>
