@@ -1,0 +1,1109 @@
+<title>Kumash Sunumu</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;1,6..96,400;1,6..96,500&family=Figtree:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: kadife zemin üstünde editoryal moda sunumu; kapakta 3D saten, bölümler 3D sahnede sayfa gibi açılır, kenarlarda mezura ve cetvel */
+:root {
+  --velvet: #12070A;
+  --velvet-2: #1C0C11;
+  --panel: rgba(255, 236, 228, .045);
+  --panel-2: rgba(255, 236, 228, .08);
+  --line: rgba(244, 228, 220, .14);
+  --ink: #F5ECE6;
+  --ink-2: #BCA9A5;
+  --silk: #D2385F;
+  --champagne: #E9CDA8;
+  --tape: #EBC548;
+  --tape-ink: #2A210A;
+  --display: "Bodoni Moda", "Didot", "Bodoni 72", Georgia, serif;
+  --body: "Figtree", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { background: var(--velvet); }
+body {
+  background:
+    radial-gradient(1200px 700px at 85% -10%, rgba(210, 56, 95, .16), transparent 60%),
+    radial-gradient(900px 600px at -10% 40%, rgba(233, 205, 168, .06), transparent 60%),
+    var(--velvet);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--tape);
+}
+/* film greni */
+body::after {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 25; opacity: .07; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* Üst mezura: ilerleme */
+.tape {
+  position: fixed; top: env(safe-area-inset-top, 0px); left: 0; right: 0; height: 22px; z-index: 28;
+  background:
+    repeating-linear-gradient(90deg, var(--tape-ink) 0 1px, transparent 1px 10px) top left / 100% 5px no-repeat,
+    repeating-linear-gradient(90deg, var(--tape-ink) 0 1px, transparent 1px 50px) top left / 100% 9px no-repeat,
+    repeating-linear-gradient(90deg, var(--tape-ink) 0 1.5px, transparent 1.5px 100px) top left / 100% 13px no-repeat,
+    linear-gradient(180deg, #F3D35F, var(--tape) 55%, #C9A230);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, .45);
+  overflow: hidden;
+}
+.tape__nums { position: absolute; inset: 0; }
+.tape__nums span { position: absolute; bottom: 2px; font: 500 8.5px/1 var(--mono); color: var(--tape-ink); transform: translateX(3px); }
+.tape__mark {
+  position: absolute; top: 0; bottom: 0; left: 0; width: 0;
+  background: linear-gradient(90deg, rgba(210, 56, 95, .0), rgba(210, 56, 95, .55));
+  border-right: 2px solid var(--silk);
+}
+
+/* Sol cetvel */
+.ruler {
+  position: fixed; z-index: 20; left: env(safe-area-inset-left, 0px); top: 22px; bottom: 0; width: 30px;
+  border-right: 1px solid var(--line);
+  background:
+    repeating-linear-gradient(180deg, var(--line) 0 1px, transparent 1px 10px) top right / 7px 100% no-repeat,
+    repeating-linear-gradient(180deg, rgba(244, 228, 220, .35) 0 1px, transparent 1px 50px) top right / 13px 100% no-repeat,
+    rgba(18, 7, 10, .6);
+  backdrop-filter: blur(6px);
+  display: none;
+}
+.ruler__mark {
+  position: absolute; right: -1px; width: 12px; height: 2px; background: var(--silk); top: 0;
+  box-shadow: 0 0 12px var(--silk); transition: top .15s linear;
+}
+.ruler__mark::after { content: ""; position: absolute; right: 12px; top: -4px; border: 5px solid transparent; border-right-color: var(--silk); }
+@media (min-width: 1240px) { .ruler { display: block; } }
+
+/* Terzi etiketi sayaç */
+.counter {
+  position: fixed; z-index: 28;
+  right: max(16px, env(safe-area-inset-right, 0px));
+  bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  font: 500 12px/1 var(--mono); letter-spacing: .1em; color: var(--tape-ink);
+  background: var(--tape); padding: 10px 14px 10px 24px; border-radius: 3px 3px 3px 3px;
+  clip-path: polygon(12px 0, 100% 0, 100% 100%, 12px 100%, 0 50%);
+  font-variant-numeric: tabular-nums; box-shadow: 0 8px 24px rgba(0, 0, 0, .4);
+}
+.counter::before { content: ""; position: absolute; left: 12px; top: 50%; width: 5px; height: 5px; margin-top: -2.5px; border-radius: 50%; background: var(--velvet); }
+
+.wrap {
+  max-width: 1120px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+@media (min-width: 1240px) { .wrap { padding-left: max(56px, env(safe-area-inset-left, 0px)); } }
+
+h1, h2, h3 { text-wrap: balance; margin: 0; font-weight: 400; }
+p { margin: 0; }
+em.silk, h2 em {
+  font-style: italic;
+  background: linear-gradient(100deg, var(--champagne) 10%, #F6A6B9 45%, var(--silk) 90%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  padding-right: .06em;
+}
+
+/* ---------- Kapak ---------- */
+.hero {
+  position: relative; min-height: min(860px, 96vh); display: grid; align-items: end;
+  padding-block: 120px 72px; overflow: hidden; isolation: isolate;
+}
+#cloth { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; display: block; }
+.hero__fallback {
+  position: absolute; inset: 0; z-index: -2;
+  background:
+    radial-gradient(60% 80% at 75% 35%, rgba(210, 56, 95, .55), transparent 60%),
+    radial-gradient(40% 60% at 85% 70%, rgba(120, 10, 40, .6), transparent 70%);
+}
+.hero::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(90deg, rgba(18, 7, 10, .94) 0%, rgba(18, 7, 10, .7) 46%, rgba(18, 7, 10, 0) 74%),
+              linear-gradient(0deg, var(--velvet) 0%, rgba(18, 7, 10, 0) 28%);
+}
+.hero__inner { display: grid; gap: 28px; }
+.eyebrow {
+  font: 500 12px/1.6 var(--mono); letter-spacing: .22em; text-transform: uppercase; color: var(--champagne);
+  display: flex; gap: 14px; align-items: center; flex-wrap: wrap;
+}
+.eyebrow::before { content: ""; width: 48px; height: 1px; background: var(--champagne); }
+.brand {
+  font-family: var(--display); font-weight: 400; font-size: clamp(84px, 17vw, 236px);
+  line-height: .82; letter-spacing: -.045em; margin-left: -.04em;
+}
+.brand i { font-style: italic; font-weight: 400; }
+.hero h1 {
+  font-family: var(--display); font-size: clamp(26px, 3.4vw, 42px); line-height: 1.15; max-width: 21ch; font-weight: 400;
+}
+.hero .lead { color: var(--ink-2); font-size: 18px; max-width: 52ch; }
+.hero__meta { display: flex; gap: 10px; flex-wrap: wrap; }
+.pill {
+  font: 500 12px/1 var(--mono); letter-spacing: .08em; padding: 9px 13px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--panel); color: var(--ink); backdrop-filter: blur(8px);
+}
+.pill--hot { border-color: var(--silk); color: #FFD3DE; background: rgba(210, 56, 95, .14); }
+.scrollhint { font: 500 11px/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-2); display: flex; align-items: center; gap: 12px; }
+.scrollhint kbd { font: inherit; border: 1px solid var(--line); padding: 5px 7px; border-radius: 4px; color: var(--ink); }
+
+/* ---------- Sahne: 3D bölüm geçişleri ---------- */
+.scene { perspective: 1600px; perspective-origin: 50% 40%; }
+section.slide { padding-block: 120px; position: relative; }
+.stage { transform-origin: 50% 0%; will-change: transform, opacity; transform-style: preserve-3d; }
+.tag {
+  display: inline-flex; align-items: stretch; height: 30px; font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .35); transform: rotate(-1.2deg);
+}
+.tag b {
+  display: grid; place-items: center; padding: 0 12px; color: var(--tape-ink); font-weight: 500;
+  background:
+    repeating-linear-gradient(90deg, var(--tape-ink) 0 1px, transparent 1px 6px) top left / 100% 6px no-repeat,
+    linear-gradient(180deg, #F3D35F, var(--tape) 60%, #C9A230);
+  padding-top: 5px;
+}
+.tag span { display: grid; place-items: center; padding: 0 14px; background: var(--panel-2); color: var(--ink); border: 1px solid var(--line); border-left: 0; }
+h2 {
+  font-family: var(--display); font-size: clamp(38px, 6.4vw, 80px); line-height: 1.02; letter-spacing: -.02em;
+  margin-top: 28px; max-width: 16ch;
+}
+.lead { font-size: 19px; color: var(--ink-2); max-width: 60ch; margin-top: 22px; }
+.body { margin-top: 56px; display: grid; gap: 32px; }
+.note { font-size: 14.5px; color: var(--ink-2); max-width: 72ch; }
+.glass {
+  background: linear-gradient(160deg, rgba(255, 236, 228, .07), rgba(255, 236, 228, .025));
+  border: 1px solid var(--line); border-radius: 14px; backdrop-filter: blur(10px);
+  box-shadow: 0 30px 60px -30px rgba(0, 0, 0, .7), inset 0 1px 0 rgba(255, 255, 255, .05);
+}
+.tilt { transform-style: preserve-3d; transition: transform .35s cubic-bezier(.2, .7, .2, 1); }
+
+/* ---------- Demo: 3D manken ---------- */
+.demo { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.25fr); gap: 40px; align-items: center; }
+.polaroid {
+  background: #F4EEE6; padding: 14px 14px 52px; border-radius: 3px; position: relative; color: #2B1E1C;
+  box-shadow: 0 40px 70px -20px rgba(0, 0, 0, .8), 0 2px 0 rgba(255, 255, 255, .3) inset;
+  transform: rotate(-3deg);
+}
+.polaroid__photo {
+  aspect-ratio: 4 / 3.4; border-radius: 2px; position: relative; overflow: hidden;
+  background: radial-gradient(120% 90% at 30% 20%, #EDE6DC, #CFC6B8);
+  display: grid; grid-template-columns: repeat(3, 1fr); align-items: center; padding: 12px; gap: 4px;
+  max-width: 100%;
+}
+.polaroid__photo svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 8px 6px rgba(40, 20, 10, .35)); }
+.polaroid__cap { position: absolute; left: 18px; right: 18px; bottom: 14px; font: 400 22px/1 var(--display); font-style: italic; display: flex; justify-content: space-between; align-items: baseline; }
+.polaroid__cap small { font: 500 10px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #7A6A64; font-style: normal; }
+.demo__steps { display: grid; gap: 14px; margin-top: 36px; }
+.demo__steps div { display: grid; grid-template-columns: 54px 1fr; gap: 12px; align-items: baseline; font-size: 15px; color: var(--ink-2); }
+.demo__steps b { font: 500 11px/1 var(--mono); letter-spacing: .12em; color: var(--tape); }
+
+.formstage { position: relative; aspect-ratio: 1 / 1.08; max-width: 100%; border-radius: 18px; overflow: hidden; }
+.formstage::before {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(60% 55% at 50% 38%, rgba(233, 205, 168, .16), transparent 70%),
+              linear-gradient(180deg, rgba(255, 236, 228, .03), rgba(0, 0, 0, .3));
+}
+#form { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: pan-y; }
+#form:active { cursor: grabbing; }
+.callouts { position: absolute; inset: 0; pointer-events: none; }
+.callout {
+  position: absolute; font: 500 11px/1.35 var(--mono); letter-spacing: .06em; color: var(--ink);
+  padding: 7px 10px; border-radius: 6px; background: rgba(18, 7, 10, .62); border: 1px solid var(--line);
+  backdrop-filter: blur(6px); transition: opacity .4s, transform .4s;
+}
+.callout small { display: block; color: var(--ink-2); font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; }
+.callout--a { left: 4%; top: 22%; }
+.callout--b { right: 4%; top: 46%; text-align: right; }
+.callout--c { left: 6%; bottom: 18%; }
+.callout.swap { opacity: 0; transform: translateY(6px); }
+.combo-bar {
+  position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); display: flex; gap: 6px; padding: 6px;
+  background: rgba(18, 7, 10, .7); border: 1px solid var(--line); border-radius: 999px; backdrop-filter: blur(10px);
+  max-width: calc(100% - 24px); overflow-x: auto;
+}
+.combo-bar button {
+  font: 500 12px/1 var(--mono); letter-spacing: .06em; color: var(--ink-2); background: transparent; border: 0;
+  padding: 9px 13px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+}
+.combo-bar button[aria-pressed="true"] { background: var(--ink); color: var(--velvet); }
+.drag-hint { position: absolute; right: 14px; top: 14px; font: 500 10px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--ink-2); }
+.channels { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ---------- Rakamlar ---------- */
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.fact { padding: 28px 26px; }
+.fact__num { font-family: var(--display); font-size: clamp(56px, 7vw, 92px); line-height: .9; letter-spacing: -.03em; }
+.fact__num small { font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--tape); display: block; margin-top: 14px; }
+.fact p { margin-top: 14px; color: var(--ink-2); font-size: 15px; }
+
+/* ---------- Akış ---------- */
+.flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.step { padding: 24px 22px; position: relative; overflow: hidden; }
+.step__n { font-family: var(--display); font-style: italic; font-size: 64px; line-height: .8; color: rgba(244, 228, 220, .14); position: absolute; right: 16px; top: 14px; }
+.step h3 { font-size: 19px; font-weight: 600; }
+.step p { color: var(--ink-2); font-size: 15px; margin-top: 6px; max-width: 30ch; }
+.step--human { border-color: rgba(210, 56, 95, .7); background: linear-gradient(160deg, rgba(210, 56, 95, .2), rgba(210, 56, 95, .05)); }
+.step--human .step__n { color: rgba(246, 166, 185, .4); }
+.who { display: inline-block; margin-top: 14px; font: 500 10.5px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: #FFB6C8; border: 1px solid rgba(210, 56, 95, .6); padding: 5px 8px; border-radius: 999px; }
+.fan { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; position: relative; padding-top: 40px; }
+.fan::before {
+  content: "onaydan sonra · paralel yayın"; position: absolute; left: 0; right: 0; top: 0; padding-bottom: 12px;
+  font: 500 11px/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--tape);
+  border-bottom: 1px dashed rgba(235, 197, 72, .6);
+}
+.channel h3 { font-family: var(--display); font-size: 30px; }
+.channel p { color: var(--ink-2); font-size: 15px; margin-top: 4px; }
+.stockbar {
+  padding: 18px 22px; border-radius: 12px; font-weight: 500; color: var(--tape-ink);
+  background: linear-gradient(180deg, #F3D35F, var(--tape) 60%, #C9A230);
+  position: relative; overflow: hidden;
+}
+.stockbar::before { content: ""; position: absolute; inset: 0 0 auto; height: 7px; background: repeating-linear-gradient(90deg, var(--tape-ink) 0 1px, transparent 1px 8px); opacity: .7; }
+
+/* ---------- Tablolar ---------- */
+.table-wrap { overflow-x: auto; border-radius: 14px; }
+table { border-collapse: collapse; width: 100%; min-width: 660px; font-size: 15px; }
+th, td { text-align: left; vertical-align: top; padding: 15px 18px; border-bottom: 1px solid var(--line); }
+thead th { font: 500 10.5px/1.4 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--tape); border-bottom: 1px solid rgba(235, 197, 72, .4); }
+tbody tr:last-child td { border-bottom: 0; }
+td:first-child { font-weight: 600; color: var(--ink); }
+td { color: var(--ink-2); }
+td small { display: block; font: 400 12px/1.5 var(--mono); color: var(--ink-2); margin-top: 2px; }
+.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--ink); font-family: var(--mono); }
+tr.rec td { background: rgba(210, 56, 95, .1); }
+tr.rec td:first-child { box-shadow: inset 3px 0 0 var(--silk); }
+
+/* ---------- AI hattı ---------- */
+.pipeline { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; counter-reset: p; }
+.pipe { padding: 22px; }
+.pipe__k { font: 500 10.5px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--tape); }
+.pipe h3 { font-family: var(--display); font-size: 26px; margin-top: 12px; line-height: 1.1; }
+.pipe p { color: var(--ink-2); font-size: 14.5px; margin-top: 8px; }
+
+/* ---------- Mimari ---------- */
+.arch { display: grid; gap: 14px; }
+.layer { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 18px; align-items: start; }
+.layer__name { font: 500 11px/1.4 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--tape); padding-top: 16px; }
+.layer__boxes { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(176px, 1fr)); }
+.layer--rail .layer__boxes { padding: 12px; border: 1px dashed rgba(235, 197, 72, .5); border-radius: 14px; background: rgba(235, 197, 72, .04); }
+.box { padding: 14px 16px; border-radius: 10px; background: var(--panel); border: 1px solid var(--line); }
+.box b { display: block; font-size: 15px; font-weight: 600; }
+.box span { display: block; font-size: 13.5px; color: var(--ink-2); }
+.box--main { border-color: var(--silk); background: rgba(210, 56, 95, .14); box-shadow: 0 0 40px -10px rgba(210, 56, 95, .6); }
+.down { padding-left: 168px; font: 500 14px/1 var(--mono); color: var(--tape); }
+
+/* ---------- Veri modeli ---------- */
+.schema { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.entity { overflow: hidden; }
+.entity header { font: 500 13px/1 var(--mono); padding: 13px 16px; border-bottom: 1px solid var(--line); color: var(--ink); }
+.entity--core { border-color: var(--silk); }
+.entity--core header { background: linear-gradient(100deg, var(--silk), #8E1236); }
+.entity ul { list-style: none; margin: 0; padding: 12px 16px 16px; font: 400 12.5px/1.8 var(--mono); color: var(--ink-2); }
+
+/* ---------- Riskler ---------- */
+.warning {
+  font-family: var(--display); font-size: clamp(22px, 2.6vw, 30px); line-height: 1.3; max-width: 34ch;
+  padding-left: 22px; border-left: 2px solid var(--silk); margin-top: 26px;
+}
+.risks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.risk { padding: 20px; }
+.risk h3 { font-size: 16px; font-weight: 600; }
+.risk p { color: var(--ink-2); font-size: 14.5px; margin-top: 6px; }
+
+/* ---------- Yol haritası ---------- */
+.road { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; position: relative; }
+.road__tape {
+  grid-column: 1 / -1; height: 26px; border-radius: 3px; position: relative;
+  background:
+    repeating-linear-gradient(90deg, var(--tape-ink) 0 1px, transparent 1px 8px) top left / 100% 6px no-repeat,
+    repeating-linear-gradient(90deg, var(--tape-ink) 0 1.5px, transparent 1.5px 40px) top left / 100% 11px no-repeat,
+    linear-gradient(180deg, #F3D35F, var(--tape) 60%, #C9A230);
+  box-shadow: 0 14px 30px -12px rgba(0, 0, 0, .7);
+}
+.road__tape span { position: absolute; bottom: 3px; font: 500 10px/1 var(--mono); color: var(--tape-ink); }
+.phase { padding: 22px; }
+.phase__k { font: 500 10.5px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--ink-2); }
+.phase h3 { font-family: var(--display); font-size: 34px; line-height: 1; margin-top: 10px; }
+.phase__time { display: block; margin-top: 10px; font: 500 13px/1 var(--mono); color: var(--tape); }
+.phase ul { margin: 16px 0 0; padding-left: 18px; color: var(--ink-2); font-size: 14.5px; display: grid; gap: 4px; }
+.phase--now { border-color: var(--silk); background: linear-gradient(160deg, rgba(210, 56, 95, .22), rgba(210, 56, 95, .04)); }
+.gate { margin-top: 18px; padding-top: 14px; border-top: 1px dashed var(--line); font-size: 13.5px; color: var(--ink); }
+.gate b { display: block; font: 500 10px/1.4 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--tape); }
+
+/* ---------- Maliyet ---------- */
+.costs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 24px; align-items: start; }
+.bigcost { padding: 30px; }
+.bigcost .n { font-family: var(--display); font-size: clamp(56px, 7.5vw, 104px); line-height: .9; letter-spacing: -.03em; }
+.bigcost .u { font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--tape); margin-top: 14px; display: block; }
+.bigcost p { color: var(--ink-2); font-size: 14.5px; margin-top: 16px; }
+.bars { display: grid; gap: 14px; padding: 24px; }
+.bar { display: grid; grid-template-columns: minmax(0, 1fr) 84px; gap: 6px 14px; align-items: center; font-size: 14.5px; }
+.bar__track { grid-column: 1 / -1; height: 10px; border-radius: 999px; background: rgba(255, 236, 228, .06); position: relative; overflow: hidden; }
+.bar__fill { position: absolute; top: 0; bottom: 0; border-radius: 999px; background: linear-gradient(90deg, var(--champagne), var(--silk)); }
+.bar .num { font-size: 13px; }
+
+/* ---------- Sorular ---------- */
+.questions { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; counter-reset: q; }
+.questions li { counter-increment: q; padding: 18px 20px 18px 66px; position: relative; font-size: 15.5px; }
+.questions li::before { content: counter(q, decimal-leading-zero); position: absolute; left: 20px; top: 16px; font: italic 400 28px/1 var(--display); color: var(--ink-2); }
+.questions li.first { border-color: rgba(210, 56, 95, .6); }
+.questions li.first::before { color: #FF9DB5; }
+.legend { display: flex; align-items: center; gap: 10px; }
+.legend i { width: 12px; height: 12px; border-radius: 50%; background: var(--silk); box-shadow: 0 0 14px var(--silk); flex: none; }
+
+footer { padding-block: 64px 96px; border-top: 1px solid var(--line); }
+footer .brandmini { font: italic 400 44px/1 var(--display); }
+footer p { font: 500 12px/1.7 var(--mono); color: var(--ink-2); letter-spacing: .04em; margin-top: 14px; max-width: 80ch; }
+
+:focus-visible { outline: 2px solid var(--tape); outline-offset: 3px; }
+
+@media (max-width: 900px) {
+  .demo, .costs { grid-template-columns: minmax(0, 1fr); }
+  .flow, .fan, .facts { grid-template-columns: minmax(0, 1fr); }
+  .pipeline, .road, .schema, .risks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .layer { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .layer__name { padding-top: 0; }
+  .down { padding-left: 0; text-align: center; }
+  .questions { grid-template-columns: minmax(0, 1fr); }
+  .hero::after { background: linear-gradient(0deg, rgba(18, 7, 10, .96) 0%, rgba(18, 7, 10, .55) 55%, rgba(18, 7, 10, .2) 100%); }
+}
+@media (max-width: 560px) {
+  body { font-size: 16px; }
+  section.slide { padding-block: 84px; }
+  .pipeline, .road, .schema, .risks { grid-template-columns: minmax(0, 1fr); }
+  .hero { padding-block: 96px 56px; }
+  .callout { font-size: 10px; }
+  .callout--b { top: 40%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stage { transform: none !important; opacity: 1 !important; }
+  .tilt { transition: none; }
+}
+</style>
+
+<div class="tape" aria-hidden="true"><div class="tape__nums" id="tapeNums"></div><div class="tape__mark" id="tapeMark"></div></div>
+<div class="ruler" aria-hidden="true"><div class="ruler__mark" id="rulerMark"></div></div>
+<div class="counter" id="counter" aria-hidden="true">01 / 12</div>
+
+<!-- 01 Kapak -->
+<header class="hero" id="kapak" data-slide>
+  <div class="hero__fallback" aria-hidden="true"></div>
+  <canvas id="cloth" aria-hidden="true"></canvas>
+  <div class="wrap hero__inner">
+    <div class="eyebrow">Ürün ve teknik plan · 23 Ekim 2026 · Murat Arslan</div>
+    <div class="brand">Kuma<i>sh</i></div>
+    <h1>Tek fotoğraf çek. Ürün <em class="silk">manken üstünde</em>, her kanalda satışta.</h1>
+    <p class="lead">Kendi kıyafet mağazamız. Düz bir ürün fotoğrafından yapay zekâ manken görselleri ve kombinler üretir, metinleri yazar, tek onayla sitemize, Trendyol'a ve Instagram'a aynı anda yayınlar.</p>
+    <div class="hero__meta">
+      <span class="pill pill--hot">1 fotoğraf → 3–4 ürün</span>
+      <span class="pill">kendi site</span><span class="pill">Trendyol</span><span class="pill">Instagram</span>
+    </div>
+    <div class="scrollhint"><kbd>→</kbd> sonraki bölüm <kbd>←</kbd> önceki</div>
+  </div>
+</header>
+
+<main class="scene">
+
+<!-- 02 Demo -->
+<section class="slide" id="demo" data-slide>
+  <div class="wrap stage">
+    <span class="tag"><b>02</b><span>Nasıl görünür</span></span>
+    <h2>Bir fotoğraf, <em>üç görünüm</em></h2>
+    <p class="lead">Solda telefonla çekilen düz fotoğraf. Sağda aynı ürünlerin AI ile giydirildiği manken. Mankeni sürükleyip çevirebilir, kombinler arasında geçebilirsin.</p>
+    <div class="body">
+      <div class="demo">
+        <div>
+          <div class="polaroid tilt" data-tilt>
+            <div class="polaroid__photo" aria-label="Düz zeminde serilmiş bluz, kalem etek ve A etek">
+              <svg viewBox="0 0 100 110" role="img" aria-label="Bordo saten bluz">
+                <defs>
+                  <linearGradient id="satinR" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E0496F"/><stop offset=".45" stop-color="#9C1638"/><stop offset=".7" stop-color="#C62D55"/><stop offset="1" stop-color="#6E0C26"/></linearGradient>
+                  <linearGradient id="woolB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3A3436"/><stop offset="1" stop-color="#151213"/></linearGradient>
+                  <linearGradient id="satinG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F6D98A"/><stop offset=".5" stop-color="#C99A3A"/><stop offset="1" stop-color="#E7C062"/></linearGradient>
+                  <pattern id="twill" width="3" height="3" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="3" height="3" fill="none"/><line x1="0" y1="0" x2="0" y2="3" stroke="#000" stroke-opacity=".12" stroke-width="1"/></pattern>
+                </defs>
+                <path d="M30 18 L42 12 Q50 20 58 12 L70 18 L88 34 L78 45 L70 38 L71 96 L29 96 L30 38 L22 45 L12 34 Z" fill="url(#satinR)"/>
+                <path d="M30 18 L42 12 Q50 20 58 12 L70 18 L88 34 L78 45 L70 38 L71 96 L29 96 L30 38 L22 45 L12 34 Z" fill="url(#twill)"/>
+              </svg>
+              <svg viewBox="0 0 100 110" role="img" aria-label="Siyah yün kalem etek">
+                <path d="M33 10 H67 L72 100 H28 Z" fill="url(#woolB)"/>
+                <path d="M33 10 H67 L72 100 H28 Z" fill="url(#twill)"/>
+                <line x1="50" y1="70" x2="50" y2="100" stroke="#000" stroke-opacity=".5"/>
+              </svg>
+              <svg viewBox="0 0 100 110" role="img" aria-label="Altın sarısı A kesim etek">
+                <path d="M36 12 H64 L84 98 H16 Z" fill="url(#satinG)"/>
+                <path d="M36 12 H64 L84 98 H16 Z" fill="url(#twill)"/>
+              </svg>
+            </div>
+            <div class="polaroid__cap">tek çekim <small>IMG_0412 · 3 ürün</small></div>
+          </div>
+          <div class="demo__steps">
+            <div><b>01</b><span>Parçalar ayrıştırılır, türü bulunur.</span></div>
+            <div><b>02</b><span>Renk, kumaş ve kalıp okunur.</span></div>
+            <div><b>03</b><span>Sabit AI mankene giydirilir, kombinler kurulur.</span></div>
+          </div>
+        </div>
+        <div class="formstage glass">
+          <canvas id="form" aria-label="Döndürülebilir 3D manken; seçili kombini giyiyor"></canvas>
+          <div class="drag-hint">sürükle · çevir</div>
+          <div class="callouts" aria-live="polite">
+            <div class="callout callout--a" id="coA"><small>kumaş</small>saten</div>
+            <div class="callout callout--b" id="coB"><small>renk</small>bordo</div>
+            <div class="callout callout--c" id="coC"><small>kalıp</small>kalem etek</div>
+          </div>
+          <div class="combo-bar" role="group" aria-label="Kombin seç">
+            <button type="button" id="cA" data-combo="0" aria-pressed="true">Kombin A</button>
+            <button type="button" id="cB" data-combo="1" aria-pressed="false">Kombin B</button>
+            <button type="button" id="cC" data-combo="2" aria-pressed="false">Tekli · elbise</button>
+          </div>
+        </div>
+      </div>
+      <p class="note">Manken, kumaşlar ve etiketler sunum için hazırlanmış örnektir; gerçek sistemde görseller try-on modelinden fotoğraf kalitesinde gelir.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 Neden -->
+<section class="slide" id="neden" data-slide>
+  <div class="wrap stage">
+    <span class="tag"><b>03</b><span>Neden</span></span>
+    <h2>Stüdyo ve manken <em>gerekmez</em></h2>
+    <p class="lead">Bir ürünün raftan satışa çıkma süresi günlerden dakikalara iner. İnsan sürece yalnız iki kez dokunur: fotoğrafı çeker, sonucu onaylar.</p>
+    <div class="body">
+      <div class="facts">
+        <div class="fact glass tilt" data-tilt><div class="fact__num">2<small>insan dokunuşu</small></div><p>Fotoğraf çekmek ve onaylamak. Gerisi kuyrukta çalışan işler.</p></div>
+        <div class="fact glass tilt" data-tilt><div class="fact__num">5 dk<small>yayın hedefi</small></div><p>Onaydan sonra üç kanalda birden yayında olma hedefi.</p></div>
+        <div class="fact glass tilt" data-tilt><div class="fact__num">&lt;$1<small>ürün başına AI</small></div><p>~8 görsel ve yeniden üretimler dahil hedef maliyet (tahmini).</p></div>
+      </div>
+      <p class="note">İlk hedef 100 ürünlük katalogla uçtan uca çalışan hat. Pazarlama tarafı (Mete'nin röportajı, fenomen işbirlikleri) bu planın dışında, bağlam olarak alındı.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 Akış -->
+<section class="slide" id="akis" data-slide>
+  <div class="wrap stage">
+    <span class="tag"><b>04</b><span>Uçtan uca akış</span></span>
+    <h2>Fotoğraftan yayına <em>altı adım</em></h2>
+    <p class="lead">Kırmızı adımlar insanın dokunduğu iki an. Kalite kontrolde reddedilen görsel 4. adıma döner ve yeniden üretilir.</p>
+    <div class="body">
+      <ol class="flow">
+        <li class="step glass step--human tilt" data-tilt><span class="step__n">1</span><h3>Fotoğraf çek</h3><p>Telefonla, düz zeminde, 3–4 ürün yan yana.</p><span class="who">insan</span></li>
+        <li class="step glass tilt" data-tilt><span class="step__n">2</span><h3>Ayrıştır</h3><p>Her parçayı kes, türünü bul: üst, alt, elbise, dış giyim.</p></li>
+        <li class="step glass tilt" data-tilt><span class="step__n">3</span><h3>Tanı</h3><p>Renk, kumaş görünümü, desen, yaka ve kol tipi.</p></li>
+        <li class="step glass tilt" data-tilt><span class="step__n">4</span><h3>Mankene giydir</h3><p>Tekli çekim (ön, yan, arka) ve 2–3 kombin.</p></li>
+        <li class="step glass tilt" data-tilt><span class="step__n">5</span><h3>Metin üret</h3><p>Başlık, açıklama, Trendyol özellikleri, hashtag.</p></li>
+        <li class="step glass step--human tilt" data-tilt><span class="step__n">6</span><h3>Kontrol + onay</h3><p>Otomatik kalite kontrolü, ardından tek tıkla onay ya da ret.</p><span class="who">insan</span></li>
+      </ol>
+      <div class="fan">
+        <div class="channel"><h3>Kendi site</h3><p>Ürün sayfası ve kombin sayfası.</p></div>
+        <div class="channel"><h3>Trendyol</h3><p>Ürün kartı; Trendyol onayından geçer.</p></div>
+        <div class="channel"><h3>Instagram</h3><p>Kombin carousel'i ve Shopping etiketi.</p></div>
+      </div>
+      <div class="stockbar">Stok ve siparişler tek kayıtta: bir kanalda satış olunca diğer kanallarda stok düşer.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 AI hattı -->
+<section class="slide" id="ai" data-slide>
+  <div class="wrap stage">
+    <span class="tag"><b>05</b><span>AI görsel hattı</span></span>
+    <h2>Önce ayrıştır, <em>sonra giydir</em></h2>
+    <p class="lead">Tek fotoda birden çok ürün olduğu için önce parçalar ayrılır. Manken seti sabit kalır; her üründe aynı yüzler ve pozlar markanın kimliği olur.</p>
+    <div class="body">
+      <div class="pipeline">
+        <div class="pipe glass tilt" data-tilt><span class="pipe__k">Ayrıştırma</span><h3>Parçaları kes</h3><p>Segmentasyon modeli (ör. SAM ailesi). Parça başına şeffaf PNG ve türü.</p></div>
+        <div class="pipe glass tilt" data-tilt><span class="pipe__k">Tanıma</span><h3>Özellikleri oku</h3><p>Görüntü-dil modeli renk, desen ve kumaşı çıkarır; metne ve Trendyol alanlarına gider.</p></div>
+        <div class="pipe glass tilt" data-tilt><span class="pipe__k">Giydirme</span><h3>Virtual try-on</h3><p>Sabit AI manken setine tekli çekim ve kombinler.</p></div>
+        <div class="pipe glass tilt" data-tilt><span class="pipe__k">Kalite</span><h3>Kontrol + onay</h3><p>Renk sapması, el ve yüz bozukluğu, desen kaybı; sonra insan onayı.</p></div>
+      </div>
+      <div class="table-wrap glass">
+        <table>
+          <thead><tr><th>Seçenek</th><th>Ne için</th><th>Artı</th><th>Eksi</th></tr></thead>
+          <tbody>
+            <tr class="rec"><td>Hazır try-on API'si<small>FASHN, Vertex AI Try-On</small></td><td>Giydirme</td><td>Hızlı başlangıç, giysi detayını korur</td><td>Görsel başına ücret, vendor bağımlılığı</td></tr>
+            <tr class="rec"><td>Genel görsel modeli<small>Gemini, GPT görsel</small></td><td>Kombin, sahne, Instagram</td><td>Esnek: arka plan, poz, sahne</td><td>Desen ve logo bozulabilir</td></tr>
+            <tr><td>Açık kaynak, kendi GPU'muz<small>IDM-VTON, CatVTON</small></td><td>Yüksek hacimde giydirme</td><td>Hacimde ucuz, veri bizde</td><td>GPU sunucusu ve bakım</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Öneri: Faz 1'de vurgulu iki seçenekle başla; aylık görsel hacmi binleri geçince açık kaynağı dene. Model katmanı tek arabirim arkasında durur. Fotoğraf standardı: düz açık zemin, gün ışığı lambası, ürünler üst üste binmeden, desen için ek yakın çekim.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 Kanallar -->
+<section class="slide" id="kanallar" data-slide>
+  <div class="wrap stage">
+    <span class="tag"><b>06</b><span>Kanallar</span></span>
+    <h2>Her kanal ayrı bir <em>yayıncı</em></h2>
+    <p class="lead">Modül ortak ürün kaydını kanalın formatına çevirir, sonucu geri yazar. Bir kanaldaki ret diğerlerini durdurmaz. Kendi site ve Instagram ilk gün çalışır; Trendyol ikinci sırada.</p>
+    <div class="body">
+      <div class="table-wrap glass">
+        <table>
+          <thead><tr><th>Kanal</th><th>Ne yayınlanır</th><th>Gereken</th><th>Bilinen kısıt</th></tr></thead>
+          <tbody>
+            <tr><td>Kendi site</td><td>Ürün sayfası, varyant ve stok, kombin sayfası</td><td>Kendi kodumuz</td><td>—</td></tr>
+            <tr><td>Trendyol</td><td>Ürün kartı, görseller, fiyat ve stok</td><td>Satıcı hesabı, Partner API anahtarı</td><td>Trendyol onayı; kategori ve zorunlu özellik eşleştirmesi; görseller açık URL</td></tr>
+            <tr><td>Instagram</td><td>Kombin carousel'i, açıklama, hashtag</td><td>Business hesabı, bağlı Facebook sayfası, Graph API izni</td><td>Günlük gönderi limiti; carousel en fazla 10 görsel</td></tr>
+            <tr><td>Instagram Shopping</td><td>Gönderiden ürüne tıklama</td><td>Commerce Manager kataloğu</td><td>Hesabın Shopping onayı</td></tr>
+            <tr><td>Hepsiburada, n11, Amazon TR</td><td>Ürün kartı</td><td>Her birinin satıcı API'si</td><td>Faz 3</td></tr>
+            <tr><td>TikTok, Reels</td><td>Kısa video</td><td>AI video üretimi</td><td>Faz 3 ve sonrası</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="warning">Stok senkronu otomatik paylaşımdan daha kritik: fazla satış Trendyol puanını düşürür.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 Mimari -->
+<section class="slide" id="mimari" data-slide>
+  <div class="wrap stage">
+    <span class="tag"><b>07</b><span>Mimari</span></span>
+    <h2>Tek API, tek veritabanı, <em>ağır iş kuyrukta</em></h2>
+    <p class="lead">AI üretimi ve kanal yayını dakikalar sürebilir, dış servisler hata verebilir; bu yüzden istekte değil kuyruktaki işçilerde çalışır. Kipay'de oturmuş Railway + Postgres + Drizzle kalıbı aynen kullanılır.</p>
+    <div class="body">
+      <div class="arch">
+        <div class="layer">
+          <div class="layer__name">Arayüzler</div>
+          <div class="layer__boxes">
+            <div class="box"><b>Çekim uygulaması</b><span>PWA: telefondan foto ve onay</span></div>
+            <div class="box"><b>Yönetim paneli</b><span>Katalog, onay, sipariş, maliyet</span></div>
+            <div class="box"><b>Mağaza vitrini</b><span>Müşteri sitesi, SEO, ödeme</span></div>
+          </div>
+        </div>
+        <div class="down" aria-hidden="true">↓</div>
+        <div class="layer layer--rail">
+          <div class="layer__name">Railway</div>
+          <div class="layer__boxes">
+            <div class="box"><b>Postgres</b><span>Ürün, stok, sipariş, iş kaydı</span></div>
+            <div class="box box--main"><b>API (Next.js + Node)</b><span>Tek giriş: ürün, sipariş, yetki</span></div>
+            <div class="box"><b>İş kuyruğu</b><span>Redis + BullMQ, retry</span></div>
+            <div class="box"><b>AI işçisi</b><span>Ayrıştır, giydir, metin yaz</span></div>
+            <div class="box"><b>Yayın işçisi</b><span>Site, Trendyol, Instagram</span></div>
+            <div class="box"><b>Senkron işçisi</b><span>Zamanlı stok ve sipariş çekme</span></div>
+          </div>
+        </div>
+        <div class="down" aria-hidden="true">↓</div>
+        <div class="layer">
+          <div class="layer__name">Dış servisler</div>
+          <div class="layer__boxes">
+            <div class="box"><b>AI servisleri</b><span>Try-on, görsel, metin</span></div>
+            <div class="box"><b>R2 / S3 + CDN</b><span>Görseller, açık URL</span></div>
+            <div class="box"><b>Trendyol API</b><span>Ürün, stok, sipariş</span></div>
+            <div class="box"><b>Meta Graph API</b><span>Instagram yayını</span></div>
+          </div>
+        </div>
+      </div>
+      <p class="note">Görseller veritabanında değil nesne depolamada durur; Trendyol ve Instagram görseli açık URL'den çektiği için CDN şart. Ödeme (iyzico veya PayTR) vitrinin arkasında API üzerinden bağlanır.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 Veri -->
+<section class="slide" id="veri" data-slide>
+  <div class="wrap stage">
+    <span class="tag"><b>08</b><span>Veri modeli</span></span>
+    <h2>Merkezde <em>tek ürün kaydı</em></h2>
+    <p class="lead">Görseller, kombinler ve kanal yayınları ürüne bağlı. Kanal kayıtları ayrı tutulur; Trendyol'daki bir ret Instagram yayınını durdurmaz.</p>
+    <div class="body">
+      <div class="schema">
+        <div class="entity glass"><header>shoots</header><ul><li>ham foto URL'leri</li><li>çeken, tarih</li><li>durum</li></ul></div>
+        <div class="entity glass entity--core"><header>products</header><ul><li>başlık, açıklama</li><li>kategori, kumaş, renk</li><li>fiyat</li><li>taslak → yayında</li></ul></div>
+        <div class="entity glass"><header>variants</header><ul><li>beden, SKU, barkod</li><li>stok</li></ul></div>
+        <div class="entity glass"><header>assets</header><ul><li>ham, kesik, manken</li><li>kombin, sosyal</li><li>model, QC skoru</li></ul></div>
+        <div class="entity glass"><header>outfits</header><ul><li>ürün listesi</li><li>kapak görseli</li></ul></div>
+        <div class="entity glass"><header>channel_listings</header><ul><li>kanal, dış ID</li><li>durum, son hata</li><li>son senkron</li></ul></div>
+        <div class="entity glass"><header>jobs</header><ul><li>tür, girdi, durum</li><li>deneme sayısı</li><li>maliyet</li></ul></div>
+        <div class="entity glass"><header>orders</header><ul><li>kanal, dış sipariş no</li><li>müşteri, tutar</li><li>durum</li></ul></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 Yasal -->
+<section class="slide" id="yasal" data-slide>
+  <div class="wrap stage">
+    <span class="tag"><b>09</b><span>Yasal ve operasyon</span></span>
+    <h2>Görsel, ürünün <em>kendisi</em> olmalı</h2>
+    <p class="warning">AI görsel ürünü olduğundan farklı gösterirse iade, şikâyet ve Trendyol puan kaybı gelir. Her üründe en az bir gerçek fotoğraf AI görsellerin yanında kalır.</p>
+    <div class="body">
+      <div class="risks">
+        <div class="risk glass"><h3>AI görsel beyanı</h3><p>"Manken görselleri yapay zekâ ile oluşturulmuştur" notu. Trendyol ve Meta kuralları kod aşamasında kontrol edilecek.</p></div>
+        <div class="risk glass"><h3>Beden bilgisi</h3><p>AI manken bedeni temsil etmez; ölçüler gerçek üründen mezurayla alınır.</p></div>
+        <div class="risk glass"><h3>Mesafeli satış</h3><p>6502 sayılı Kanun ve Mesafeli Sözleşmeler Yönetmeliği: ön bilgilendirme, sözleşme, 14 gün cayma hakkı.</p></div>
+        <div class="risk glass"><h3>KVKK</h3><p>Aydınlatma metni, çerez onayı, VERBİS kaydı gerekliliği kontrolü.</p></div>
+        <div class="risk glass"><h3>E-fatura, e-arşiv</h3><p>Kendi site satışları için entegratör seçimi. Trendyol faturasını ayrı yönetir.</p></div>
+        <div class="risk glass"><h3>Ödeme</h3><p>Lisanslı ödeme kuruluşu (iyzico, PayTR). Kipay kullanılacaksa lisans durumu netleşmeli.</p></div>
+      </div>
+      <p class="note">Fenomen reklamları için: Reklam Kurulu'nun sosyal medya etkileyicileri kılavuzu reklam etiketini zorunlu tutuyor; işbirliği sözleşmelerine yazılmalı.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 Yol haritası -->
+<section class="slide" id="yol" data-slide>
+  <div class="wrap stage">
+    <span class="tag"><b>10</b><span>Yol haritası</span></span>
+    <h2>İlk satış <em>6–8 hafta</em> sonra</h2>
+    <p class="lead">Önce kendi sitemizden; Trendyol ondan sonraki 3–4 haftada eklenir. Her faz bir kapı koşuluyla kapanır. Süreler bir geliştirici varsayımıyla tahmini.</p>
+    <div class="body">
+      <div class="road">
+        <div class="road__tape" id="roadTape" aria-hidden="true"></div>
+        <div class="phase glass tilt" data-tilt>
+          <span class="phase__k">Faz 0</span><h3>Hazırlık</h3><span class="phase__time">1–2 hafta</span>
+          <ul><li>Trendyol başvurusu</li><li>Alan adı, Instagram hesabı</li><li>Çekim köşesi kurulumu</li><li>20 üründe AI denemesi</li></ul>
+          <div class="gate"><b>Kapı</b>20 üründe görsellerin en az %80'i onaylanır</div>
+        </div>
+        <div class="phase glass phase--now tilt" data-tilt>
+          <span class="phase__k">Faz 1</span><h3>Çekirdek</h3><span class="phase__time">4–6 hafta</span>
+          <ul><li>Çekim PWA + AI hattı</li><li>Onay paneli</li><li>Vitrin + ödeme</li><li>Instagram yayını</li></ul>
+          <div class="gate"><b>Kapı</b>100 ürün yayında, ilk siparişler alındı</div>
+        </div>
+        <div class="phase glass tilt" data-tilt>
+          <span class="phase__k">Faz 2</span><h3>Pazaryeri</h3><span class="phase__time">3–4 hafta</span>
+          <ul><li>Trendyol yayını</li><li>Stok ve sipariş senkronu</li><li>Instagram Shopping</li><li>Siparişler tek listede</li></ul>
+          <div class="gate"><b>Kapı</b>2 hafta boyunca fazla satış yok</div>
+        </div>
+        <div class="phase glass tilt" data-tilt>
+          <span class="phase__k">Faz 3</span><h3>Ölçek</h3><span class="phase__time">sürekli</span>
+          <ul><li>Diğer pazaryerleri</li><li>Reels ve kısa video</li><li>Kendi GPU'da try-on</li><li>Otomatik onay</li></ul>
+        </div>
+      </div>
+      <p class="note">Faz 0'daki AI denemesi tutmazsa model seçimi ya da fotoğraf standardı değiştirilir; kod yazılmaya başlanmaz.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 Maliyet -->
+<section class="slide" id="maliyet" data-slide>
+  <div class="wrap stage">
+    <span class="tag"><b>11</b><span>Maliyet</span></span>
+    <h2>Aylık işletme <em>yaklaşık</em></h2>
+    <p class="lead">Faz 1, ayda 100 ürün varsayımıyla. Rakamlar bellekten tahmin; fiyatlar sağlayıcı seçilirken teyit edilecek.</p>
+    <div class="body">
+      <div class="costs">
+        <div class="bigcost glass tilt" data-tilt>
+          <div class="n">$80–245</div>
+          <span class="u">USD / ay toplam</span>
+          <p>Dahil değil: ödeme ve Trendyol komisyonları, kargo, e-fatura entegratörü, reklam ve fenomen bütçesi.</p>
+        </div>
+        <div class="bars glass" id="bars" aria-label="Kalem bazında aylık maliyet aralıkları"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 Sorular -->
+<section class="slide" id="sorular" data-slide>
+  <div class="wrap stage">
+    <span class="tag"><b>12</b><span>Açık sorular</span></span>
+    <h2>Başlamadan önce <em>karar</em> gerekenler</h2>
+    <p class="lead legend"><i aria-hidden="true"></i>Işıklı olanlar Faz 1'den önce netleşmeli; diğerleri Faz 2'ye kadar bekleyebilir.</p>
+    <div class="body">
+      <ol class="questions">
+        <li class="glass first">Ürün gamı: kadın, erkek, çocuk; hangi kategoriler; başlangıç kataloğu kaç ürün?</li>
+        <li class="glass first">Tedarik: kendi üretim mi, toptan alım mı? Barkod ve stok akışını belirler.</li>
+        <li class="glass first">Trendyol satıcı hesabı var mı; yoksa şirket kurulumu ve başvuru ne zaman?</li>
+        <li class="glass first">Alan adı ve marka: kumash.com ve Instagram kullanıcı adı alınabilir mi?</li>
+        <li class="glass">AI manken seti: kaç manken, hangi yaş ve beden aralığı, lisanslı yüz mü sentetik mi?</li>
+        <li class="glass">Yayın onayı: her ürün insan onayından mı geçecek, yüksek QC skorunda otomatik mi?</li>
+        <li class="glass">Ödeme: iyzico, PayTR ya da Kipay?</li>
+        <li class="glass">Kargo ve iade: anlaşmalı firma kim, iade süreci kimde?</li>
+      </ol>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="brandmini">Kumash</div>
+    <p>Ürün ve teknik plan · 23 Ekim 2026 · API ayrıntıları ve fiyatlar kod aşamasında güncel dokümandan teyit edilecek.</p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function () {
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var slides = Array.prototype.slice.call(document.querySelectorAll('[data-slide]'));
+  var stages = Array.prototype.slice.call(document.querySelectorAll('.stage'));
+  var counter = document.getElementById('counter');
+  var tapeMark = document.getElementById('tapeMark');
+  var rulerMark = document.getElementById('rulerMark');
+  var total = String(slides.length).padStart(2, '0');
+
+  // Mezura rakamları
+  function drawTapeNums() {
+    var box = document.getElementById('tapeNums');
+    var html = '';
+    for (var x = 100, n = 10; x < window.innerWidth; x += 100, n += 10) html += '<span style="left:' + x + 'px">' + n + '</span>';
+    box.innerHTML = html;
+    var rt = document.getElementById('roadTape');
+    if (rt) {
+      var w = rt.clientWidth, h2 = '';
+      for (var i = 1; i * 40 < w; i++) if (i % 5 === 0) h2 += '<span style="left:' + (i * 40 + 3) + 'px">' + (i) + '</span>';
+      rt.innerHTML = h2 + '<span style="left:6px">hafta</span>';
+    }
+  }
+
+  // Maliyet çubukları (USD/ay)
+  var costs = [
+    { k: 'AI görsel üretimi', lo: 50, hi: 150, n: '100 ürün × ~8 görsel' },
+    { k: 'Railway: web, worker, Postgres, Redis', lo: 20, hi: 60 },
+    { k: 'Metin üretimi (LLM)', lo: 5, hi: 20 },
+    { k: 'Nesne depolama + CDN', lo: 0, hi: 10 },
+    { k: 'Alan adı, e-posta', lo: 5, hi: 5 }
+  ];
+  var bars = document.getElementById('bars');
+  bars.innerHTML = costs.map(function (c) {
+    var l = c.lo / 150 * 100, w = Math.max(1.5, (c.hi - c.lo) / 150 * 100);
+    var label = c.lo === c.hi ? '~' + c.lo : c.lo + '–' + c.hi;
+    return '<div class="bar"><span>' + c.k + '</span><span class="num">$' + label + '</span>' +
+      '<div class="bar__track"><div class="bar__fill" style="left:' + l + '%;width:' + w + '%"></div></div></div>';
+  }).join('');
+
+  // Bölüm sayacı + 3D sahne geçişleri
+  var ticking = false;
+  function currentIndex() {
+    var idx = 0, line = window.innerHeight * 0.4;
+    slides.forEach(function (s, i) { if (s.getBoundingClientRect().top <= line) idx = i; });
+    return idx;
+  }
+  function frame() {
+    ticking = false;
+    var vh = window.innerHeight;
+    var max = document.documentElement.scrollHeight - vh;
+    var p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+    tapeMark.style.width = (p * 100) + '%';
+    rulerMark.style.top = (p * (vh - 26)) + 'px';
+    counter.textContent = String(currentIndex() + 1).padStart(2, '0') + ' / ' + total;
+    if (reduce) return;
+    stages.forEach(function (st) {
+      var r = st.getBoundingClientRect();
+      // giriş: bölümün üstü ekranın altından yukarı çıkarken sayfa gibi kalkar
+      var enter = (r.top - vh * 0.55) / (vh * 0.6);
+      var e = Math.max(0, Math.min(1, enter));
+      var exit = Math.max(0, Math.min(1, (-r.bottom + vh * 0.25) / (vh * 0.5)));
+      var rx = e * 16 - exit * 8;
+      var tz = -e * 220 - exit * 120;
+      var op = 1 - e * 0.55 - exit * 0.4;
+      st.style.transform = 'translateZ(' + tz.toFixed(1) + 'px) rotateX(' + rx.toFixed(2) + 'deg)';
+      st.style.opacity = op.toFixed(3);
+    });
+  }
+  function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', function () { drawTapeNums(); onScroll(); });
+  drawTapeNums(); frame();
+
+  document.addEventListener('keydown', function (e) {
+    if (e.target.closest && e.target.closest('input, textarea, select, button')) return;
+    var next = e.key === 'ArrowRight' || e.key === 'PageDown';
+    var prev = e.key === 'ArrowLeft' || e.key === 'PageUp';
+    if (!next && !prev) return;
+    e.preventDefault();
+    var t = slides[Math.min(slides.length - 1, Math.max(0, currentIndex() + (next ? 1 : -1)))];
+    t.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+  });
+
+  // Kartlarda imleçle 3D eğim
+  if (!reduce && window.matchMedia('(hover: hover)').matches) {
+    document.querySelectorAll('[data-tilt]').forEach(function (el) {
+      var base = el.classList.contains('polaroid') ? ' rotate(-3deg)' : '';
+      el.addEventListener('pointermove', function (ev) {
+        var b = el.getBoundingClientRect();
+        var x = (ev.clientX - b.left) / b.width - 0.5, y = (ev.clientY - b.top) / b.height - 0.5;
+        el.style.transform = 'perspective(900px) rotateY(' + (x * 10).toFixed(2) + 'deg) rotateX(' + (-y * 10).toFixed(2) + 'deg) translateZ(14px)' + base;
+      });
+      el.addEventListener('pointerleave', function () { el.style.transform = base ? 'rotate(-3deg)' : ''; });
+    });
+  }
+
+  if (!window.THREE) return;
+  var THREE = window.THREE;
+
+  function makeRenderer(canvas) {
+    try {
+      var r = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+      r.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      r.outputEncoding = THREE.sRGBEncoding;
+      r.toneMapping = THREE.ACESFilmicToneMapping;
+      r.toneMappingExposure = 0.85;
+      return r;
+    } catch (err) { return null; }
+  }
+  function weaveTexture(fine) {
+    var c = document.createElement('canvas'); c.width = c.height = 256;
+    var g = c.getContext('2d');
+    g.fillStyle = '#808080'; g.fillRect(0, 0, 256, 256);
+    for (var y = 0; y < 256; y += 2) {
+      for (var x = 0; x < 256; x += 2) {
+        var v = 118 + ((x + y) % 8 < 4 ? 22 : -10) + (Math.random() * 18 - 9);
+        g.fillStyle = 'rgb(' + v + ',' + v + ',' + v + ')';
+        g.fillRect(x, y, 2, 2);
+      }
+    }
+    var t = new THREE.CanvasTexture(c);
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.repeat.set(fine, fine);
+    return t;
+  }
+  function watch(canvas, cb) {
+    var visible = true;
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) { visible = es[0].isIntersecting; if (visible) cb(); }).observe(canvas);
+    }
+    return function () { return visible; };
+  }
+
+  // ---------- Kapak: rüzgârda saten ----------
+  (function cloth() {
+    var canvas = document.getElementById('cloth');
+    var renderer = makeRenderer(canvas);
+    if (!renderer) return;
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(32, 1, 0.1, 200);
+    camera.position.set(0, 0, 26);
+
+    var NX = 44, NY = 34, CW = 15, CH = 13;
+    var geo = new THREE.PlaneGeometry(CW, CH, NX - 1, NY - 1);
+    var pos = geo.attributes.position;
+    var P = [], Q = [], pinned = {};
+    for (var k = 0; k < pos.count; k++) {
+      P.push(new THREE.Vector3(pos.getX(k), pos.getY(k), 0));
+      Q.push(new THREE.Vector3(pos.getX(k), pos.getY(k), 0));
+    }
+    for (var i = 0; i < NX; i++) {
+      if (i % 7 === 0 || i === NX - 1) { P[i].x *= 0.74; Q[i].copy(P[i]); pinned[i] = P[i].clone(); }
+    }
+    var rx = CW / (NX - 1), ry = CH / (NY - 1);
+    var cons = [];
+    for (var j = 0; j < NY; j++) for (var i2 = 0; i2 < NX; i2++) {
+      var a = j * NX + i2;
+      if (i2 < NX - 1) cons.push([a, a + 1, rx]);
+      if (j < NY - 1) cons.push([a, a + NX, ry]);
+      if (i2 < NX - 2) cons.push([a, a + 2, rx * 2]);
+    }
+    var mat = new THREE.MeshStandardMaterial({
+      color: 0x5E0820, roughness: 0.34, metalness: 0.22, side: THREE.DoubleSide,
+      bumpMap: weaveTexture(10), bumpScale: 0.012
+    });
+    var mesh = new THREE.Mesh(geo, mat);
+    var group = new THREE.Group(); group.add(mesh); scene.add(group);
+    group.rotation.set(0.05, -0.32, 0.04);
+
+    scene.add(new THREE.AmbientLight(0x3b1820, 0.9));
+    var key = new THREE.DirectionalLight(0xFFD7B0, 1.35); key.position.set(-8, 9, 12); scene.add(key);
+    var rim = new THREE.DirectionalLight(0xFF4E7E, 1.1); rim.position.set(10, -3, -8); scene.add(rim);
+    var fill = new THREE.PointLight(0xE9CDA8, 0.5, 60); fill.position.set(6, 2, 10); scene.add(fill);
+
+    var t = 0, mx = 0, my = 0;
+    window.addEventListener('pointermove', function (e) { mx = e.clientX / window.innerWidth - 0.5; my = e.clientY / window.innerHeight - 0.5; }, { passive: true });
+
+    function step() {
+      t += 0.016;
+      for (var k = 0; k < P.length; k++) {
+        if (pinned[k]) continue;
+        var p = P[k], q = Q[k];
+        var vx = (p.x - q.x) * 0.982, vy = (p.y - q.y) * 0.982, vz = (p.z - q.z) * 0.982;
+        q.copy(p);
+        var col = k % NX, row = (k / NX) | 0;
+        var w = 0.0042 * (Math.sin(t * 0.9 + col * 0.17 + row * 0.05) + 0.55 * Math.sin(t * 1.9 - row * 0.23 + col * 0.04) + 0.75);
+        p.x += vx + 0.0011 * Math.sin(t * 0.6 + row * 0.1);
+        p.y += vy - 0.0058;
+        p.z += vz + w * (0.3 + row / NY);
+      }
+      for (var it = 0; it < 6; it++) {
+        for (var c = 0; c < cons.length; c++) {
+          var A = P[cons[c][0]], B = P[cons[c][1]], rest = cons[c][2];
+          var dx = B.x - A.x, dy = B.y - A.y, dz = B.z - A.z;
+          var d = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1e-6;
+          var f = (d - rest) / d;
+          var pa = pinned[cons[c][0]], pb = pinned[cons[c][1]];
+          if (pa && pb) continue;
+          var sa = pa ? 0 : (pb ? 1 : 0.5), sb = pb ? 0 : (pa ? 1 : 0.5);
+          A.x += dx * f * sa; A.y += dy * f * sa; A.z += dz * f * sa;
+          B.x -= dx * f * sb; B.y -= dy * f * sb; B.z -= dz * f * sb;
+        }
+      }
+      for (var pk in pinned) P[pk].copy(pinned[pk]);
+      for (var m = 0; m < P.length; m++) pos.setXYZ(m, P[m].x, P[m].y, P[m].z);
+      pos.needsUpdate = true;
+      geo.computeVertexNormals();
+    }
+    function size() {
+      var w = canvas.clientWidth, h = canvas.clientHeight;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h; camera.updateProjectionMatrix();
+      var wide = w > 900;
+      group.position.set(wide ? 6.4 : 0, wide ? 2.6 : 3.6, 0);
+      group.scale.setScalar(wide ? 1 : 0.85);
+    }
+    size(); window.addEventListener('resize', size);
+    for (var w0 = 0; w0 < 240; w0++) step();
+    var isVisible = watch(canvas, function () {});
+    function loop() {
+      requestAnimationFrame(loop);
+      if (!isVisible()) return;
+      if (!reduce) step();
+      group.rotation.y += ((-0.32 + mx * 0.25) - group.rotation.y) * 0.04;
+      group.rotation.x += ((0.05 + my * 0.12) - group.rotation.x) * 0.04;
+      renderer.render(scene, camera);
+    }
+    loop();
+  })();
+
+  // ---------- Demo: 3D manken ----------
+  (function form() {
+    var canvas = document.getElementById('form');
+    var renderer = makeRenderer(canvas);
+    if (!renderer) return;
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(30, 1, 0.1, 50);
+    camera.position.set(0, 0.0, 8.4);
+    camera.lookAt(0, -0.45, 0);
+
+    var prof = [[0.34, -1.0], [0.40, -0.8], [0.385, -0.55], [0.315, -0.3], [0.288, -0.15], [0.305, 0.05], [0.37, 0.3], [0.392, 0.45], [0.365, 0.62], [0.30, 0.76], [0.17, 0.88], [0.105, 0.95], [0.10, 1.08]];
+    function bodyR(y) {
+      if (y <= prof[0][1]) return prof[0][0];
+      for (var i = 1; i < prof.length; i++) {
+        if (y <= prof[i][1]) {
+          var a = prof[i - 1], b = prof[i], s = (y - a[1]) / (b[1] - a[1]);
+          return a[0] + (b[0] - a[0]) * s;
+        }
+      }
+      return prof[prof.length - 1][0];
+    }
+    var pts = [new THREE.Vector2(0, -1.0)].concat(prof.map(function (p) { return new THREE.Vector2(p[0], p[1]); }), [new THREE.Vector2(0, 1.1)]);
+
+    var linen = new THREE.MeshStandardMaterial({ color: 0xE6D8C4, roughness: 0.95, metalness: 0, bumpMap: weaveTexture(14), bumpScale: 0.01 });
+    var wood = new THREE.MeshStandardMaterial({ color: 0x5A3420, roughness: 0.45, metalness: 0.05 });
+    var brass = new THREE.MeshStandardMaterial({ color: 0xC9A15A, roughness: 0.28, metalness: 0.9 });
+
+    var rig = new THREE.Group(); scene.add(rig);
+    var torso = new THREE.Group(); torso.scale.set(1, 1, 0.74); rig.add(torso);
+    torso.add(new THREE.Mesh(new THREE.LatheGeometry(pts, 96), linen));
+    var cap = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.07, 40), wood); cap.position.y = 1.13; rig.add(cap);
+    var knob = new THREE.Mesh(new THREE.SphereGeometry(0.06, 24, 16), brass); knob.position.y = 1.2; rig.add(knob);
+    var pole = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 1.32, 20), brass); pole.position.y = -1.66; rig.add(pole);
+    var collar = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.09, 24), brass); collar.position.y = -1.95; rig.add(collar);
+    for (var l = 0; l < 3; l++) {
+      var leg = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.02, 0.62, 12), wood);
+      var ang = l * Math.PI * 2 / 3;
+      leg.position.set(Math.cos(ang) * 0.25, -2.16, Math.sin(ang) * 0.25);
+      leg.rotation.set(Math.sin(ang) * 0.95, 0, -Math.cos(ang) * 0.95);
+      rig.add(leg);
+    }
+
+    // zemin gölgesi
+    var sc = document.createElement('canvas'); sc.width = sc.height = 128;
+    var sg = sc.getContext('2d'); var gr = sg.createRadialGradient(64, 64, 4, 64, 64, 64);
+    gr.addColorStop(0, 'rgba(0,0,0,.65)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); sg.fillStyle = gr; sg.fillRect(0, 0, 128, 128);
+    var shadow = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 1.8), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(sc), transparent: true, depthWrite: false }));
+    shadow.rotation.x = -Math.PI / 2; shadow.position.y = -2.44; scene.add(shadow);
+
+    // mezura bel bandı
+    var tc = document.createElement('canvas'); tc.width = 1024; tc.height = 48;
+    var tg = tc.getContext('2d');
+    var tgr = tg.createLinearGradient(0, 0, 0, 48); tgr.addColorStop(0, '#F5D768'); tgr.addColorStop(.6, '#EBC548'); tgr.addColorStop(1, '#BF9628');
+    tg.fillStyle = tgr; tg.fillRect(0, 0, 1024, 48);
+    tg.fillStyle = '#2A210A'; tg.font = '500 15px IBM Plex Mono, monospace';
+    for (var x = 0; x <= 1024; x += 8) {
+      var cm = x / 8, h = cm % 10 === 0 ? 18 : (cm % 5 === 0 ? 12 : 7);
+      tg.fillRect(x, 0, 1.4, h);
+      if (cm % 10 === 0 && cm > 0) tg.fillText(String(cm), x + 3, 40);
+    }
+    var tapeTex = new THREE.CanvasTexture(tc); tapeTex.encoding = THREE.sRGBEncoding; tapeTex.anisotropy = 4;
+    var waistY = -0.17;
+    var band = new THREE.Mesh(new THREE.CylinderGeometry(bodyR(waistY) + 0.034, bodyR(waistY) + 0.034, 0.055, 128, 1, true),
+      new THREE.MeshStandardMaterial({ map: tapeTex, roughness: 0.5, metalness: 0.05, side: THREE.DoubleSide }));
+    band.position.y = waistY; torso.add(band);
+
+    function garment(yTop, yBot, off, flareFrom, flare) {
+      var g = [], n = 48;
+      for (var s = 0; s <= n; s++) {
+        var y = yBot + (yTop - yBot) * s / n;
+        var r = bodyR(Math.max(y, -1.0)) + off;
+        if (flare && y < flareFrom) r += Math.pow(flareFrom - y, 1.15) * flare;
+        g.push(new THREE.Vector2(r, y));
+      }
+      return new THREE.LatheGeometry(g, 120);
+    }
+    function fabric(color, rough, metal, rep) {
+      var m = new THREE.MeshStandardMaterial({ color: color, roughness: rough, metalness: metal, side: THREE.DoubleSide, bumpMap: weaveTexture(rep), bumpScale: 0.006 });
+      return m;
+    }
+    var satinWine = fabric(0x6E0A24, 0.3, 0.3, 24);
+    var woolBlack = fabric(0x080607, 0.8, 0.0, 40);
+    var satinIvory = fabric(0xEFE4D2, 0.3, 0.25, 24);
+    var satinGold = fabric(0xD3A743, 0.3, 0.45, 24);
+    var satinEmerald = fabric(0x0F5B45, 0.26, 0.4, 24);
+
+    function combo(parts) { var g = new THREE.Group(); parts.forEach(function (p) { g.add(new THREE.Mesh(p[0], p[1])); }); g.visible = false; torso.add(g); return g; }
+    var combos = [
+      combo([[garment(0.80, -0.30, 0.014), satinWine], [garment(-0.12, -1.38, 0.022, -0.9, -0.04), woolBlack]]),
+      combo([[garment(0.80, -0.30, 0.014), satinIvory], [garment(-0.12, -1.46, 0.024, -0.2, 0.34), satinGold]]),
+      combo([[garment(0.74, -1.56, 0.016, -0.32, 0.2), satinEmerald]])
+    ];
+    var info = [
+      { a: ['kumaş', 'saten + yün'], b: ['renk', 'bordo · siyah'], c: ['kalıp', 'kalem etek'] },
+      { a: ['kumaş', 'saten'], b: ['renk', 'fildişi · altın'], c: ['kalıp', 'A kesim etek'] },
+      { a: ['kumaş', 'saten'], b: ['renk', 'zümrüt'], c: ['kalıp', 'askılı elbise'] }
+    ];
+
+    scene.add(new THREE.HemisphereLight(0xFFE7D6, 0x2A0E14, 0.55));
+    var key = new THREE.SpotLight(0xFFE2C4, 1.8, 30, 0.5, 0.6); key.position.set(-3.5, 5, 6); scene.add(key);
+    var rim = new THREE.DirectionalLight(0xFF5C86, 1.4); rim.position.set(4, 2, -5); scene.add(rim);
+    var front = new THREE.DirectionalLight(0xFFFFFF, 0.5); front.position.set(1, 0, 8); scene.add(front);
+
+    var current = 0, drop = 0, rot = -0.5, target = -0.5, dragging = false, lastX = 0, auto = !reduce;
+    function show(i) {
+      combos[current].visible = false; current = i; combos[i].visible = true; drop = reduce ? 0 : 1;
+      ['A', 'B', 'C'].forEach(function (s, j) { document.getElementById('c' + s).setAttribute('aria-pressed', j === i ? 'true' : 'false'); });
+      var ids = ['coA', 'coB', 'coC'], keys = ['a', 'b', 'c'];
+      ids.forEach(function (id, j) {
+        var el = document.getElementById(id); el.classList.add('swap');
+        setTimeout(function () {
+          el.innerHTML = '<small>' + info[i][keys[j]][0] + '</small>' + info[i][keys[j]][1];
+          el.classList.remove('swap');
+        }, reduce ? 0 : 220);
+      });
+    }
+    combos[0].visible = true;
+    document.querySelectorAll('[data-combo]').forEach(function (b) { b.addEventListener('click', function () { show(+b.getAttribute('data-combo')); }); });
+
+    canvas.addEventListener('pointerdown', function (e) { dragging = true; lastX = e.clientX; auto = false; canvas.setPointerCapture(e.pointerId); });
+    canvas.addEventListener('pointermove', function (e) { if (!dragging) return; target += (e.clientX - lastX) * 0.012; lastX = e.clientX; });
+    canvas.addEventListener('pointerup', function () { dragging = false; setTimeout(function () { if (!dragging && !reduce) auto = true; }, 2500); });
+
+    function size() {
+      var w = canvas.clientWidth, h = canvas.clientHeight;
+      if (!w || !h) return;
+      renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+    }
+    size(); window.addEventListener('resize', size);
+    var isVisible = watch(canvas, size);
+    function loop() {
+      requestAnimationFrame(loop);
+      if (!isVisible()) return;
+      if (auto) target += 0.0045;
+      rot += (target - rot) * 0.08;
+      rig.rotation.y = rot;
+      if (drop > 0.001) { drop *= 0.86; } else drop = 0;
+      var g = combos[current];
+      g.position.y = drop * 0.35; g.scale.set(1 + drop * 0.06, 1, 1 + drop * 0.06);
+      renderer.render(scene, camera);
+    }
+    loop();
+  })();
+})();
+</script>

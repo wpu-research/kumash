@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #8E1236;
+  --color-brand-dark: #6E0A24;
+  --color-brand-soft: #FBEFF2;
+  --color-tape: #EBC548;
+  --color-tape-ink: #2A210A;
+  --color-ink: #1B1A1F;
+  --color-muted: #6B6A73;
+  --color-line: #E7E5EA;
+  --color-page: #F6F5F7;
+  --color-ok: #1E7B4F;
+  --color-warn: #B7791F;
+  --font-sans: var(--font-figtree), "Segoe UI", system-ui, sans-serif;
+  --font-display: var(--font-bodoni), "Didot", Georgia, serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+
+html { color-scheme: light; }
+body { background: var(--color-page); color: var(--color-ink); -webkit-font-smoothing: antialiased; }
+h1, h2, h3 { text-wrap: balance; }
+:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
+
+/* mezura şeridi: marka detayı (kargo barı, rozetler) */
+.tape {
+  background:
+    repeating-linear-gradient(90deg, var(--color-tape-ink) 0 1px, transparent 1px 8px) top left / 100% 5px no-repeat,
+    repeating-linear-gradient(90deg, var(--color-tape-ink) 0 1.2px, transparent 1.2px 40px) top left / 100% 9px no-repeat,
+    linear-gradient(180deg, #F3D35F, var(--color-tape) 60%, #C9A230);
+  color: var(--color-tape-ink);
+}
+.scroll-x { overflow-x: auto; scrollbar-width: none; }
+.scroll-x::-webkit-scrollbar { display: none; }
