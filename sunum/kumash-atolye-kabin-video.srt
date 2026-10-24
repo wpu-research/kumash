@@ -1,0 +1,191 @@
+1
+00:00:00,100 --> 00:00:05,134
+Kumash için iki uygulama ve tek bir çekirdek planlıyoruz: Atölye ve Kabin.
+
+2
+00:00:05,084 --> 00:00:10,041
+Personel ürünü telefonla çekiyor; sistem ürünü tanıyor, mankene giydiriyor;
+
+3
+00:00:10,041 --> 00:00:13,677
+siteye, Trendyol'a, Instagram'a ve Facebook'a yüklüyor.
+
+4
+00:00:13,677 --> 00:00:17,463
+Müşteri de beğendiği ürünü kendi üzerinde görebiliyor.
+
+5
+00:00:18,320 --> 00:00:21,034
+Arka uç zaten çalışıyor.
+
+6
+00:00:20,984 --> 00:00:25,407
+İş kuyruğu, Claude ile ürün tanıma, onay ve site yayını hazır.
+
+7
+00:00:25,407 --> 00:00:31,092
+Yeni olan iki uç var: personelin telefonundaki Atölye uygulaması ve sitedeki Kabin.
+
+8
+00:00:31,092 --> 00:00:35,864
+İkisi de aynı ürün kaydını ve aynı kesik ürün görselini kullanıyor.
+
+9
+00:00:36,732 --> 00:00:41,860
+Atölye, iOS ve Android'de tek kodla çalışan personel uygulaması ve dört
+
+10
+00:00:41,860 --> 00:00:43,160
+ekrandan oluşuyor.
+
+11
+00:00:43,110 --> 00:00:49,636
+Önce çekim: ürünler düz zemine yan yana dizilir, kamera parçaları canlı olarak işaretler.
+
+12
+00:00:49,636 --> 00:00:55,029
+Sonra kontrol: Claude türü, rengi ve kumaşı çıkarır, başlığı ve açıklamayı
+
+13
+00:00:55,029 --> 00:00:56,487
+yazar, fiyat önerir.
+
+14
+00:00:56,487 --> 00:01:03,086
+Ardından giydirme: her parça mankene giydirilir, beğenilmeyen görsel yeniden üretilir.
+
+15
+00:01:03,086 --> 00:01:08,277
+Son olarak yayın: beden stoğu girilir ve ürün tek tuşla siteye, Trendyol'a,
+
+16
+00:01:08,277 --> 00:01:10,838
+Instagram'a ve Facebook'a gönderilir.
+
+17
+00:01:11,704 --> 00:01:16,329
+Arka planda tek bir ürün yaklaşık iki dakikada onay ekranına geliyor.
+
+18
+00:01:16,279 --> 00:01:19,548
+Onaylanmayan hiçbir ürün yayına çıkmıyor.
+
+19
+00:01:20,396 --> 00:01:24,011
+Kabin, ürün sayfasındaki Üzerinde dene düğmesi.
+
+20
+00:01:23,961 --> 00:01:28,912
+Müşteri kendine yakın hazır bir model seçiyor ya da boy fotoğrafını yüklüyor;
+
+21
+00:01:28,912 --> 00:01:33,348
+birkaç saniye içinde ürünü üzerinde görüyor ve oradan sepete ekliyor.
+
+22
+00:01:33,348 --> 00:01:37,747
+Kombin denemesi, günlük kota ve önbellek de planın parçası.
+
+23
+00:01:38,616 --> 00:01:42,027
+Mimaride her şey aynı kuyruktan geçiyor.
+
+24
+00:01:41,977 --> 00:01:45,511
+Mobil uygulama ve site aynı API'ye bağlanıyor.
+
+25
+00:01:45,511 --> 00:01:50,283
+Tanıma için Claude, giydirme için ayrı bir görsel servisi, depolama için
+
+26
+00:01:50,283 --> 00:01:52,073
+Cloudflare R2 kullanılıyor.
+
+27
+00:01:52,073 --> 00:01:56,946
+Instagram ve Facebook tek bir Meta uygulamasından besleniyor; ürünler Meta
+
+28
+00:01:56,946 --> 00:01:58,395
+kataloğuna da giriyor.
+
+29
+00:01:59,260 --> 00:02:03,452
+Claude görsel üretmiyor; tanıma ve metin için kullanılıyor.
+
+30
+00:02:03,402 --> 00:02:07,489
+Giydirme ve deneme için ana aday FASHN, yedeği Gemini.
+
+31
+00:02:07,489 --> 00:02:12,285
+İlk hafta aynı yirmi ürünle iki servisi kıyaslayıp karar vereceğiz.
+
+32
+00:02:13,136 --> 00:02:15,982
+Müşterinin fotoğrafı emanettir.
+
+33
+00:02:15,932 --> 00:02:20,930
+Açık rıza alınacak, fotoğraflar yirmi dört saat içinde silinecek, yüz şablonu
+
+34
+00:02:20,930 --> 00:02:25,343
+çıkarılmayacak ve hiçbir veri yapay zekâ eğitiminde kullanılmayacak.
+
+35
+00:02:25,343 --> 00:02:29,237
+Fotoğraf yükleme, hukuk görüşü alınmadan açılmayacak.
+
+36
+00:02:30,084 --> 00:02:34,048
+Maliyet hesaplayıcıyla kendi rakamlarını deneyebilirsin.
+
+37
+00:02:33,998 --> 00:02:39,875
+Ayda üç yüz yeni ürün ve beş bin denemeyle aylık maliyet yaklaşık beş yüz yirmi dolar.
+
+38
+00:02:39,875 --> 00:02:44,635
+En büyük kalem Kabin denemeleri; kota ve önbellek bu yüzden önemli.
+
+39
+00:02:45,496 --> 00:02:50,114
+Bilerek yöneteceğimiz riskler var: tek karede çok ürün kaliteyi düşürüyor,
+
+40
+00:02:50,114 --> 00:02:54,857
+yapay zekâ renk ve detayı değiştirebiliyor, Kabin'de kişisel veri işleniyor.
+
+41
+00:02:54,807 --> 00:02:57,703
+Her birinin önlemi planda yazılı.
+
+42
+00:02:58,556 --> 00:03:03,420
+Başlamak için Apple ve Google geliştirici hesapları, API anahtarları, Trendyol
+
+43
+00:03:03,420 --> 00:03:08,097
+bilgileri ve bir Meta hesabıyla Instagram ve Facebook bağlantısı gerekiyor.
+
+44
+00:03:08,047 --> 00:03:13,888
+Takvim yaklaşık dokuz hafta: önce çekirdek ve Atölye, ardından kanallar ve Kabin.
+
+45
+00:03:14,736 --> 00:03:19,952
+Son olarak üç karar bekliyor: manken mi model mi, Kabin hangi girişle açılsın
+
+46
+00:03:19,952 --> 00:03:22,390
+ve hangi görsel servisi kullanılsın.
+
+47
+00:03:22,340 --> 00:03:25,285
+Çek, giydir, yayınla, dene.
+
+48
+00:03:25,285 --> 00:03:27,568
+Kumash Atölye ve Kabin.
