@@ -1,5 +1,6 @@
 import { Image } from 'expo-image';
 import { router, useLocalSearchParams } from 'expo-router';
+import { useEffect } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Body, Button, Display, ErrorNote, Label, Loading, ProductRow, Screen } from '@/components/ui';
@@ -19,7 +20,10 @@ export default function ShootScreen() {
   const c = useColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { api } = useSession();
-  const q = useLoad(() => api.shoot(Number(id)), { pollMs: 1500 });
+  // Çekim ilerlemesi realtime ile gelir; abonelik düşerse diye seyrek bir yoklama da açık kalır.
+  const q = useLoad(() => api.shoot(Number(id)), { pollMs: 15000 });
+  const reload = q.reload;
+  useEffect(() => api.watchShoot(Number(id), () => void reload()), [api, id, reload]);
   const d = q.data;
   const done = d?.shoot.status === 'tamamlandi';
   const failed = d?.shoot.status === 'hata' || d?.job?.status === 'hata';

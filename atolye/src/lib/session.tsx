@@ -1,34 +1,17 @@
-import * as SecureStore from 'expo-secure-store';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { Platform } from 'react-native';
 
-import { createClient, DEFAULT_SERVER, type Client } from './api';
+import { createClient, createSupabaseClient, SUPABASE_URL, type Client } from './api';
 
-// Oturum anahtarı telefonda güvenli depoda (Keychain / Keystore) tutulur; web önizlemesinde localStorage.
-const store = {
-  async get(k: string) {
-    if (Platform.OS !== 'web') return SecureStore.getItemAsync(k);
-    try {
-      return localStorage.getItem(k);
-    } catch {
-      return null;
-    }
-  },
-  async set(k: string, v: string | null) {
-    if (Platform.OS !== 'web') return v == null ? SecureStore.deleteItemAsync(k) : SecureStore.setItemAsync(k, v);
-    try {
-      if (v == null) localStorage.removeItem(k);
-      else localStorage.setItem(k, v);
-    } catch {}
-  },
-};
+// Supabase istemcisi uygulama ömrü boyunca tek: oturumu AsyncStorage'da kendi saklar ve yeniler.
+const sb = createSupabaseClient();
+const api: Client = createClient(sb);
 
 type Session = {
   ready: boolean;
   token: string | null;
   server: string;
   api: Client;
-  signIn: (server: string, password: string) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
 };
 
@@ -37,33 +20,43 @@ const Ctx = createContext<Session | null>(null);
 export function SessionProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
   const [token, setToken] = useState<string | null>(null);
-  const [server, setServer] = useState(DEFAULT_SERVER);
 
   useEffect(() => {
-    (async () => {
-      const [t, s] = await Promise.all([store.get('token'), store.get('server')]);
-      if (s) setServer(s);
-      setToken(t);
+    let alive = true;
+    sb.auth.getSession().then(({ data }) => {
+      if (!alive) return;
+      setToken(data.session?.access_token ?? null);
       setReady(true);
-    })();
+    });
+    // Oturum yenilendiğinde, kapandığında ya da başka bir yerden değiştiğinde tek kaynaktan haber al.
+    const { data: sub } = sb.auth.onAuthStateChange((_event, session) => {
+      setToken(session?.access_token ?? null);
+      setReady(true);
+    });
+    return () => {
+      alive = false;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
+
+  const signIn = useCallback(async (email: string, password: string) => {
+    await api.login(email, password);
+    // onAuthStateChange token'ı zaten yazar; giriş ekranının beklemesi için burada da set edilir.
+    const { data } = await sb.auth.getSession();
+    setToken(data.session?.access_token ?? null);
   }, []);
 
   const signOut = useCallback(async () => {
+    await api.signOut();
     setToken(null);
-    await store.set('token', null);
   }, []);
 
-  const signIn = useCallback(async (srv: string, password: string) => {
-    const clean = srv.trim().replace(/\/+$/, '') || DEFAULT_SERVER;
-    const res = await createClient(clean, null, () => {}).login(password);
-    await Promise.all([store.set('token', res.token), store.set('server', clean)]);
-    setServer(clean);
-    setToken(res.token);
-  }, []);
+  const value = useMemo(
+    () => ({ ready, token, server: SUPABASE_URL, api, signIn, signOut }),
+    [ready, token, signIn, signOut],
+  );
 
-  const api = useMemo(() => createClient(server, token, () => void signOut()), [server, token, signOut]);
-
-  return <Ctx.Provider value={{ ready, token, server, api, signIn, signOut }}>{children}</Ctx.Provider>;
+  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 
 export function useSession() {

@@ -38,5 +38,9 @@ export function useLoad<T>(fn: () => Promise<T>, opts: { pollMs?: number | false
     return () => clearInterval(t);
   }, [poll, run]);
 
-  return { data, setData, error, loading, refreshing, refresh: () => run('refresh'), reload: () => run('silent') };
+  // refresh/reload kimliği sabit kalmalı: abonelik kuran efektler bunlara bağlanıyor.
+  const refresh = useCallback(() => run('refresh'), [run]);
+  const reload = useCallback(() => run('silent'), [run]);
+
+  return { data, setData, error, loading, refreshing, refresh, reload };
 }

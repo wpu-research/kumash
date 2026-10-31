@@ -72,7 +72,10 @@
       },
       "eas": {
         "projectId": "ef929870-7634-4147-b8d3-c6635dc2f21d"
-      }
+      },
+      "supabaseUrl": "",
+      "supabaseAnonKey": "",
+      "storeUrl": "https://kumash.com"
     },
     "owner": "wpu-research"
   }

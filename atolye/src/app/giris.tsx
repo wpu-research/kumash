@@ -1,28 +1,28 @@
-import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useRef, useState, type ComponentRef } from 'react';
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Body, Button, Display, ErrorNote, Label } from '@/components/ui';
-import { DEFAULT_SERVER } from '@/lib/api';
 import { useSession } from '@/lib/session';
 import { DISPLAY, useColors } from '@/lib/theme';
 
 export default function Login() {
   const c = useColors();
   const insets = useSafeAreaInsets();
-  const { signIn, server: saved } = useSession();
+  const { signIn } = useSession();
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [server, setServer] = useState(saved);
-  const [showServer, setShowServer] = useState(saved !== DEFAULT_SERVER);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const passwordRef = useRef<ComponentRef<typeof TextInput>>(null);
 
   const submit = async () => {
-    if (!password) return setError('Şifreyi gir.');
+    if (!email.trim()) return setError('E-postanı gir.');
+    if (!password) return setError('Şifreni gir.');
     setBusy(true);
     setError(null);
     try {
-      await signIn(server, password);
+      await signIn(email, password);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -43,30 +43,39 @@ export default function Login() {
 
         <View style={{ gap: 14 }}>
           <View style={{ gap: 6 }}>
+            <Label>E-posta</Label>
+            <TextInput
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              autoCorrect={false}
+              autoComplete="email"
+              keyboardType="email-address"
+              autoFocus
+              placeholder="ad@kumash.com"
+              placeholderTextColor={c.ink2}
+              onSubmitEditing={() => passwordRef.current?.focus()}
+              returnKeyType="next"
+              style={input}
+            />
+          </View>
+          <View style={{ gap: 6 }}>
             <Label>Şifre</Label>
             <TextInput
+              ref={passwordRef}
               value={password}
               onChangeText={setPassword}
               secureTextEntry
-              autoFocus
-              placeholder="Panel şifresi"
+              autoComplete="current-password"
+              placeholder="••••••••"
               placeholderTextColor={c.ink2}
               onSubmitEditing={submit}
               returnKeyType="go"
               style={input}
             />
           </View>
-          {showServer ? (
-            <View style={{ gap: 6 }}>
-              <Label>Sunucu</Label>
-              <TextInput value={server} onChangeText={setServer} autoCapitalize="none" autoCorrect={false} keyboardType="url" style={input} />
-            </View>
-          ) : null}
           {error ? <ErrorNote text={error} /> : null}
           <Button title="Giriş yap" onPress={submit} busy={busy} />
-          <Pressable onPress={() => setShowServer((v) => !v)} hitSlop={8} style={{ alignSelf: 'center', padding: 6 }}>
-            <Text style={{ color: c.ink2, fontSize: 13 }}>{showServer ? 'Sunucu ayarını gizle' : 'Sunucu adresini değiştir'}</Text>
-          </Pressable>
         </View>
 
         <Display size={16} style={{ color: c.ink2, textAlign: 'center' }}>
